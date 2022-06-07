@@ -8,7 +8,7 @@ namespace UnityEngine.SceneManagement
           PlayingScene
      }
 
-     internal static class SceneManagementExtensions
+     public static class SceneManagementExtensions
      {
           public static string AsString(this SceneName name)
           {

@@ -1,3 +1,16 @@
 {
-	"name": "Runtime"
+    "name": "Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b3216732411c65c4c8247e3f39c36081"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
