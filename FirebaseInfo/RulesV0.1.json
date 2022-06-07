@@ -1,0 +1,33 @@
+{
+    "rules": {
+        ".read": "auth !== null",
+
+        "dashboard": {
+            ".indexOn": [ "score" ],
+
+            "$user_id": {
+                ".write": "$user_id === auth.uid",
+                ".validate": "newData.hasChildren(['name', 'score'])",
+
+                "name": {
+                    ".validate": "newData.isString() && newData.val() === auth.token.name"
+                },
+                "score": {
+                    ".validate": "newData.isNumber() && newData.val() > data.val()"
+                },
+                "$other": {
+                    ".validate": false
+                }
+                // note that the intruder can write uid[name,score] entries with many additional childs with null value.
+                // and it seems like firebase developers didn't provided any way to prevent it.
+                //example:
+                //{
+                //   "name": (string)auth.token.name
+                //   "score": (int)score(>lastScore)
+                //   "someDirt": null
+                //   "someOtherDirt": null
+                //}
+            }
+        }
+    }
+}

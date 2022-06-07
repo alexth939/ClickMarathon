@@ -1,0 +1,12 @@
+{
+    "dashboard": {
+        "d7f1bdcb-794d-4396-8cd4-f142c414d6e1": {
+            "name": "good tester",
+            "score": 666
+        },
+        "some-id": {
+            "name": "tester",
+            "score": 23
+        }
+    }
+}
