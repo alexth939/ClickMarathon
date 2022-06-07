@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "955383326473",
+    "firebase_url": "https://clickmarathon-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "clickmarathon",
+    "storage_bucket": "clickmarathon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955383326473:android:4a969ac4687368c27fd5d8",
+        "android_client_info": {
+          "package_name": "com.BoredCoders.ClickMarathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955383326473-s5bpla4m4b0okvs03vdvfb7i69nocjto.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCK6nA6M5741tboKBNDQmE_0yBmAD4ibA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955383326473-s5bpla4m4b0okvs03vdvfb7i69nocjto.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
