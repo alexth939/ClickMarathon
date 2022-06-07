@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+  <string name="firebase_database_url" translatable="false">https://clickmarathon-default-rtdb.europe-west1.firebasedatabase.app</string>
+  <string name="gcm_defaultSenderId" translatable="false">955383326473</string>
+  <string name="google_storage_bucket" translatable="false">clickmarathon.appspot.com</string>
+  <string name="project_id" translatable="false">clickmarathon</string>
+  <string name="google_api_key" translatable="false">AIzaSyBCK6nA6M5741tboKBNDQmE_0yBmAD4ibA</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBCK6nA6M5741tboKBNDQmE_0yBmAD4ibA</string>
+  <string name="google_app_id" translatable="false">1:955383326473:android:4a969ac4687368c27fd5d8</string>
+  <string name="default_web_client_id" translatable="false">955383326473-s5bpla4m4b0okvs03vdvfb7i69nocjto.apps.googleusercontent.com</string>
+</resources>
