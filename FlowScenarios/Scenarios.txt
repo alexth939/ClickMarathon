@@ -1,0 +1,76 @@
+Scenarios:
+
+Connecting Scene:
+
+1. App executes first time on device
+2. User sees the "Welcome Screen" with 2 buttons: 1:"Register" 2:"Login"
+	2.3. User clicks on "Register"
+	2.4. App transits to "Registration Screen"
+	2.5. User sees 3 input fields: 1:"Name" 2:"Email" 3:"Password"
+	2.6. User sees 2 buttons: 1:"Register" 2:"Already have an Account?"
+		2.6.7. User not provides all requested "Data" or provides wrong "Data"
+		2.6.8. User hits "Register" 
+		2.6.9. App throws corresponding error message
+			otherwise
+		2.6.10. User provides valid requested "Data"
+		2.6.11. User hits "Register"
+		2.6.12. App tries to Register new User
+			2.6.12.13. App failed to Register
+			2.6.12.14. App throws corresponding error message
+				otherwise
+			2.6.12.15. App succeeded to Register
+			2.6.12.16. App tries to Login
+				2.6.12.16.17. App failed to Login
+				2.6.12.16.18. App throws corresponding error message
+					otherwise
+				2.6.12.16.19. App succeeded to Login
+				2.6.12.16.20. App transits to "Playing Scene"
+			otherwise
+		2.6.21. User hits "Already have an Account?"
+		2.6.22. goto 2.24
+	2.23. User clicks on "Login"
+	2.24. App transits to "Login Screen"
+	2.25. User sees 2 input fields: 1:"Email" 2:"Password"
+	2.26. User sees 2 buttons: 1:"Login" 2:"Don't have an Account?"
+		2.26.27. User not provides all requested "Data" or provides wrong "Data"
+		2.26.28. User hits "Login" 
+		2.26.29. App throws corresponding error message
+			otherwise
+		2.26.30. User provides valid requested "Data"
+		2.26.31. User hits "Login" 
+		2.26.32. App tries to Login
+			2.26.32.33. App failed to Login
+			2.26.32.34. App throws corresponding error message
+				otherwise
+			2.26.32.35. App succeeded to Login
+			2.26.32.36. goto 2.6.12.16.20
+			otherwise
+		2.26.37. User hits "Don't have an Account?"
+		2.26.38. goto 2.4
+		
+Playing Scene:
+
+1. App pulling the leaderboard info from database
+2. User sees the "Connecting Screen" for at least 1 second
+	2.3. App fails to retrieve the leaderboard
+	2.4. App throws corresponding error message
+	2.5. User sees the "Error Message" with 1 button: "Reconnect"
+	2.6. User hits "Reconnect"
+	2.7. goto 1
+		otherwise
+	2.8. App succeeded to retrieve the leaderboard
+	2.9. App transits to "Game Screen"
+	2.10. User sees the "Leaderboard"
+	2.11. User sees 1 button: "Start"
+	2.12. User Hits "Start"
+	2.13. App switching "Start" button to "Click" button
+	2.14. App Starting 10 seconds timer
+		2.14.15. User clicks the "Click" button
+		2.14.16. App counts User's clicks
+		2.14.17. App shows new score on "Click" button
+	2.18. App stops the timer
+	2.19. App calculates new score
+	2.20. App switching "Click" button to "Start" button
+	2.21. App sends new score to database
+	2.22. goto 2.10
+		
