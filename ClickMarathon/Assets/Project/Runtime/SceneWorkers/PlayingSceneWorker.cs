@@ -24,7 +24,11 @@ namespace SceneWorkers
                     new LeaderboardPresenter(_dependencyContainer.LeaderboardView);
 
                new DatabaseGrabber(leaderboardPresenter.HandleFoundEntry)
-                    .IterateEntries(() => _isReadyToStart = true);
+                    .IterateEntries(() =>
+                    {
+                         _isReadyToStart = true;
+                         leaderboardPresenter.DisplayFilteredResults();
+                    });
 
                StartCoroutine(ShowGameWindowWhenReady());
           }

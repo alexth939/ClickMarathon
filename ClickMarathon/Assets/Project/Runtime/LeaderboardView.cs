@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using WindowViews;
+using FirebaseWorkers;
 
 namespace Runtime
 {
      public class LeaderboardView: MonoBehaviour, ILeaderboardView
      {
-          private LeaderboardView _leaderboardView;
+          [SerializeField] private List<EntryView> _entries;
 
-          public LeaderboardView(LeaderboardView view)
+          public void SetEntries(List<ScoreEntryModel> entriesToShow)
           {
-               _leaderboardView = view;
+               for(int i = 0; i < entriesToShow.Count; i++)
+               {
+                    _entries[i].SetEntry(entriesToShow[i]);
+               }
           }
      }
 }
