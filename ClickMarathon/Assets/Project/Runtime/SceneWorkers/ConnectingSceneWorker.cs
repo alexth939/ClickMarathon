@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using WindowViews;
 using FirebaseWorkers;
+using static FirebaseWorkers.FirebaseCustomApi;
+using static FirebaseWorkers.FirebaseServices;
 
 namespace SceneWorkers
 {
@@ -51,8 +53,15 @@ namespace SceneWorkers
                          StartCoroutine(logInWindow.Show(onDone: () =>
                               new Loginner(logInWindow, onLoggedInSubscriber: () =>
                               {
-                                   Debug.Log($"invoking SwitchScene(SceneName.PlayingScene)");
-                                   SwitchScene(SceneName.PlayingScene);
+                                   GetOrCreateUserEntryInfoAsync(
+                                        foundHandler: currentUserEntryInfo =>
+                                        {
+                                             CurrentUserEntry = currentUserEntryInfo;
+                                             SwitchScene(SceneName.PlayingScene);
+                                        },
+                                        taskExceptionHandler: _ => { },
+                                        firebaseExceptionHandler: _ => { },
+                                        cantFindHandler: () => { });
                               })))));
                });
           }

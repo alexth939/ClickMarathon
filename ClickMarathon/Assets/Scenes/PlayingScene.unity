@@ -5237,8 +5237,9 @@ GameObject:
   - component: {fileID: 1553149091}
   - component: {fileID: 1553149090}
   - component: {fileID: 1553149089}
+  - component: {fileID: 1553149092}
   m_Layer: 5
-  m_Name: PlayerEntries
+  m_Name: Leaderboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5356,6 +5357,18 @@ MonoBehaviour:
   m_PartOfParent: 0
   m_IgnoreSelfGraphic: 0
   m_IgnoreSelfStencil: 0
+--- !u!114 &1553149092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553149086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d36d9bbff67374691bb61fe62091c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1554327431
 GameObject:
   m_ObjectHideFlags: 0
@@ -6848,6 +6861,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dependencyContainer:
     _connectingWindow: {fileID: 959964793}
+    _gameWindowView: {fileID: 2068049389}
+    _leaderboardView: {fileID: 1553149092}
 --- !u!4 &2030551726
 Transform:
   m_ObjectHideFlags: 0
@@ -6876,6 +6891,7 @@ GameObject:
   - component: {fileID: 2068049385}
   - component: {fileID: 2068049384}
   - component: {fileID: 2068049388}
+  - component: {fileID: 2068049389}
   m_Layer: 5
   m_Name: Game Window
   m_TagString: Untagged
@@ -6980,3 +6996,16 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2068049389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068049383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35fd76de9c8ac0240a3950ceef69e14e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alphaLerper: {fileID: 2068049388}

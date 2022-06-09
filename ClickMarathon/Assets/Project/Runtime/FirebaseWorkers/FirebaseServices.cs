@@ -5,6 +5,7 @@ namespace FirebaseWorkers
 {
      public static class FirebaseServices
      {
+          public static ScoreEntryModel CurrentUserEntry;
           public static FirebaseAuth GetAuthenticationService() => FirebaseAuth.DefaultInstance;
           public static FirebaseDatabase GetDatabaseService() => FirebaseDatabase.DefaultInstance;
      }
