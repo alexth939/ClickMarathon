@@ -13,7 +13,7 @@
                     ".validate": "newData.isString() && newData.val() === auth.token.name"
                 },
                 "score": {
-                    ".validate": "newData.isNumber() && newData.val() > data.val()"
+                    ".validate": "newData.isNumber() && data.exists() === false || newData.val() > data.val()"
                 },
                 "$other": {
                     ".validate": false
