@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace WindowViews
 {
-     interface IWelcomeWindowView: IWindowView
+     public interface IWelcomeWindowView: IWindowView
      {
           UnityEvent OnRegisterButtonClicked { get; }
           UnityEvent OnSignInButtonClicked { get; }

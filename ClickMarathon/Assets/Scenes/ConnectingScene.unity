@@ -5676,7 +5676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5276893ad5a85fe4aa28f286eef912e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dependencyContainer:
+  _dependencies:
     _welcomeWindow: {fileID: 1136908285}
     _registrationWindow: {fileID: 327511170}
     _logInWindow: {fileID: 308426463}

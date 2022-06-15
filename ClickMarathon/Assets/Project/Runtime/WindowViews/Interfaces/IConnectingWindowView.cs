@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WindowViews
 {
-     interface IConnectingWindowView: IWindowView
+     public interface IConnectingWindowView: IWindowView
      {
      }
 }

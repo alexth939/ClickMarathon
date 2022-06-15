@@ -1,5 +1,6 @@
 ﻿using System;
 using Firebase.Database;
+using UnityEngine;
 using static FirebaseWorkers.FirebaseCustomApi;
 using static ProjectDefaults.ProjectConstants;
 
@@ -10,6 +11,7 @@ namespace FirebaseWorkers
           public string ID;
           public string Name;
           public long Score;
+          public int Position;
 
           public ScoreEntryFields Fields => new ScoreEntryFields()
           {
@@ -19,17 +21,30 @@ namespace FirebaseWorkers
 
           public static explicit operator ScoreEntryModel(DataSnapshot entrySnapshot)
           {
-               return new ScoreEntryModel()
+               try
                {
-                    ID = entrySnapshot.Key,
-                    Name = (string)entrySnapshot.Child(DashboardNameKey).Value,
-                    Score = (long)entrySnapshot.Child(DashboardScoreKey).Value
-               };
+                    return new ScoreEntryModel()
+                    {
+                         ID = entrySnapshot.Key,
+                         Name = (string)entrySnapshot.Child(DashboardNameKey).Value,
+                         Score = (long)entrySnapshot.Child(DashboardScoreKey).Value
+                    };
+               }
+               catch(Exception ex)
+               {
+                    Debug.LogError($"{ex.Message}");
+                    return null;
+               }
           }
 
           public static ScoreEntryModel GenerateDefault()
           {
-               TryGetCachedUser(out var user);
+               if(TryGetCachedUser(out var user) == false)
+               {
+                    Debug.Log($"No cached FirebaseUser found!");
+                    return null;
+               }
+
                return new ScoreEntryModel()
                {
                     ID = user.UserId,

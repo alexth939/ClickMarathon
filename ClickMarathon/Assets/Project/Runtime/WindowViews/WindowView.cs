@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using static ProjectDefaults.ProjectStrings;
 using static ProjectDefaults.ProjectConstants;
 
 namespace WindowViews
@@ -16,12 +17,18 @@ namespace WindowViews
                #region Exception handlers
                if(_isTransitting)
                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.PingObject(this);
+#endif
                     Debug.LogError(WindowBusyMessage);
                     yield break;
                }
 
                if(IsNotHidden())
                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.PingObject(this);
+#endif
                     Debug.LogError(WindowNotHiddenMessage);
                     yield break;
                }
@@ -33,7 +40,8 @@ namespace WindowViews
                for(float i = 0; i < duration; i += Time.deltaTime)
                {
                     yield return new WaitForEndOfFrame();
-                    _alphaLerper.alpha = Mathf.InverseLerp(0, duration, i);
+                    float t = Mathf.InverseLerp(0, duration, i);
+                    _alphaLerper.alpha = t;
                }
 
                FinalizeShow();
@@ -61,12 +69,18 @@ namespace WindowViews
                #region Exception handlers
                if(_isTransitting)
                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.PingObject(this);
+#endif
                     Debug.LogError(WindowBusyMessage);
                     yield break;
                }
 
                if(IsNotCompletelyRevealed())
                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorGUIUtility.PingObject(this);
+#endif
                     Debug.LogError(WindowNotRevealedMessage);
                     yield break;
                }
@@ -78,7 +92,8 @@ namespace WindowViews
                for(float i = duration; i > 0; i -= Time.deltaTime)
                {
                     yield return new WaitForEndOfFrame();
-                    _alphaLerper.alpha = Mathf.InverseLerp(0, duration, i);
+                    float t = Mathf.InverseLerp(0, duration, i);
+                    _alphaLerper.alpha = t;
                }
 
                FinalizeHide();
@@ -86,7 +101,7 @@ namespace WindowViews
                #region Nested methods
                bool IsNotCompletelyRevealed() =>
                     gameObject.activeSelf == false
-                    || _alphaLerper.alpha < almostOne;
+                    || _alphaLerper.alpha < AlmostOne;
 
                void PrepareHide()
                {

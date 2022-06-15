@@ -1,8 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using WindowViews;
 using FirebaseWorkers;
+using Runtime.DependencyContainers;
 using static FirebaseWorkers.FirebaseCustomApi;
 using static FirebaseWorkers.FirebaseServices;
 
@@ -10,7 +9,7 @@ namespace SceneWorkers
 {
      public sealed class ConnectingSceneWorker: SceneWorker
      {
-          [SerializeField] private ConnectingSceneDependencyContainer _dependencyContainer;
+          [SerializeField] private ConnectingSceneContainer _dependencies;
 
           protected override void EnteringScene()
           {
@@ -23,6 +22,7 @@ namespace SceneWorkers
                     }
                     else
                     {
+                         Debug.Log($"Something is wrong with firebase");
                          // todo: maybe inform the user about that?
                     }
                });
@@ -30,8 +30,8 @@ namespace SceneWorkers
 
           private void SubscribeRegistrationWindowInitializer()
           {
-               var welcomeWindow = _dependencyContainer.WelcomeWindow;
-               var registrationWindow = _dependencyContainer.RegistrationWindow;
+               var welcomeWindow = _dependencies.WelcomeWindow;
+               var registrationWindow = _dependencies.RegistrationWindow;
 
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
                {
@@ -43,8 +43,10 @@ namespace SceneWorkers
 
           private void SubscribeLogInWindowInitializer()
           {
-               var welcomeWindow = _dependencyContainer.WelcomeWindow;
-               var logInWindow = _dependencyContainer.LogInWindow;
+               Debug.Log($"LogIn clicked");
+
+               var welcomeWindow = _dependencies.WelcomeWindow;
+               var logInWindow = _dependencies.LogInWindow;
 
                welcomeWindow.OnSignInButtonClicked.AddListener(() =>
                {
@@ -56,6 +58,7 @@ namespace SceneWorkers
                                    GetOrCreateUserEntryInfoAsync(
                                         foundHandler: currentUserEntryInfo =>
                                         {
+                                             Debug.Log($"switching scene");
                                              CurrentUserEntry = currentUserEntryInfo;
                                              SwitchScene(SceneName.PlayingScene);
                                         },
@@ -64,18 +67,6 @@ namespace SceneWorkers
                                         cantFindHandler: () => { });
                               })))));
                });
-          }
-
-          [Serializable]
-          private sealed class ConnectingSceneDependencyContainer
-          {
-               public IWelcomeWindowView WelcomeWindow => _welcomeWindow;
-               public IRegistrationWindowView RegistrationWindow => _registrationWindow;
-               public ILogInWindowView LogInWindow => _logInWindow;
-
-               [SerializeField] private WelcomeWindowView _welcomeWindow;
-               [SerializeField] private RegistrationWindowView _registrationWindow;
-               [SerializeField] private LogInWindowView _logInWindow;
           }
      }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WindowViews
 {
-     interface IGameWindowView: IWindowView
+     public interface IGameWindowView: IWindowView
      {
      }
 }

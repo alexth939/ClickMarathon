@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using Firebase.Auth;
 using Firebase.Database;
-using System.Threading.Tasks;
+using Firebase.Extensions;
 using static FirebaseWorkers.FirebaseServices;
 using static ProjectDefaults.ProjectConstants;
-using Firebase.Extensions;
 
 namespace FirebaseWorkers
 {
@@ -13,6 +13,7 @@ namespace FirebaseWorkers
      {
           private static Lazy<DatabaseReference> LazyDashboardRef => new Lazy<DatabaseReference>(() => GetDatabaseService().GetReference(FirebaseDashboardPath));
           public static DatabaseReference DashboardRef => LazyDashboardRef.Value;
+
           public static void LogOut() => GetAuthenticationService().SignOut();
 
           public static bool TryGetCachedUser(out FirebaseUser user)
@@ -23,16 +24,14 @@ namespace FirebaseWorkers
 
           public static Task<DataSnapshot> ReadScoreEntryAsync()
           {
-               Debug.Log($"Read()");
-
                TryGetCachedUser(out var user);
-               return DashboardRef.Child(user.UserId).GetValueAsync();
+               var val = DashboardRef.Child(user.UserId).GetValueAsync();
+               return val;
           }
 
           public static Task WriteScoreEntryAsync(ScoreEntryModel scoreEntry)
           {
-               Debug.Log($"Write()");
-
+               Debug.Log($"write user ()");
                TryGetCachedUser(out var user);
                var fields = JsonUtility.ToJson(scoreEntry.Fields);
                return DashboardRef.Child(user.UserId).SetRawJsonValueAsync(fields);
@@ -44,6 +43,16 @@ namespace FirebaseWorkers
                Action<DataSnapshot> firebaseExceptionHandler,
                Action cantFindHandler)
           {
+               TryGetCachedUser(out var user);
+               try
+               {
+                    Debug.Log($"my firebase user: {user.UserId}");
+               }
+               catch(Exception ex)
+               {
+                    Debug.LogError($"ex:{ex.Message}");
+               }
+
                ReadScoreEntryAsync().ContinueWithOnMainThread(task =>
                {
                     if(task.Exception != null)
@@ -53,7 +62,8 @@ namespace FirebaseWorkers
                     else if(task.Result.Exists)
                     {
                          Debug.Log($"found");
-                         foundHandler.Invoke((ScoreEntryModel)task.Result);
+                         var entry = (ScoreEntryModel)task.Result;
+                         foundHandler.Invoke(entry);
                     }
                     else
                     {
@@ -67,7 +77,6 @@ namespace FirebaseWorkers
                                    }
                                    else
                                    {
-                                        Debug.Log($"writed");
                                         ReadScoreEntryAsync().ContinueWithOnMainThread(task =>
                                         {
                                              if(task.Exception != null)
@@ -76,7 +85,6 @@ namespace FirebaseWorkers
                                              }
                                              else if(task.Result.Exists)
                                              {
-                                                  Debug.Log($"found");
                                                   foundHandler.Invoke((ScoreEntryModel)task.Result);
                                              }
                                              else
@@ -88,12 +96,6 @@ namespace FirebaseWorkers
                               });
                     }
                });
-          }
-
-          private class JsonUser
-          {
-               public string name;
-               public int score;
           }
      }
 }

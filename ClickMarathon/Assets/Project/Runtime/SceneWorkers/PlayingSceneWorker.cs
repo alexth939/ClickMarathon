@@ -1,45 +1,66 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using FirebaseWorkers;
-using WindowViews;
-using Runtime;
+using Runtime.DependencyContainers;
 using static ProjectDefaults.ProjectConstants;
-using static FirebaseWorkers.FirebaseServices;
 using static FirebaseWorkers.FirebaseCustomApi;
+using static FirebaseWorkers.FirebaseServices;
 
-namespace SceneWorkers
+namespace Runtime.SceneWorkers
 {
      public sealed class PlayingSceneWorker: SceneWorker
      {
-          [SerializeField] private PlayingSceneDependencyContainer _dependencyContainer;
+          [SerializeField] private PlayingSceneContainer _dependencies;
+          private ILeaderboardPresenter _leaderboard;
+          private DatabaseListener _databaseListener;
 
           private bool _isReadyToStart = false;
 
           protected override void EnteringScene()
           {
                CheckFirebaseStuff();
-               var leaderboardPresenter =
-                    new LeaderboardPresenter(_dependencyContainer.LeaderboardView);
 
-               new DatabaseGrabber(leaderboardPresenter.HandleFoundEntry)
-                    .IterateEntries(() =>
+               _leaderboard = new LeaderboardPresenter(_dependencies.LeaderboardView);
+               new MagicPlayButtonPresenter(
+                    _dependencies.PlayButtonView,
+                    _dependencies.PlayTimerView,
+                    newScoreReadyHandler: entry =>
                     {
-                         _isReadyToStart = true;
-                         leaderboardPresenter.DisplayFilteredResults();
+                         WriteScoreEntryAsync(CurrentUserEntry).ContinueWith(task =>
+                         {
+                              if(task.IsCompletedSuccessfully)
+                                   Debug.Log($"entry writing task completed successfully!");
+                              else
+                                   Debug.Log($"something whent wrong. ex:{task.Exception}");
+                         });
                     });
 
-               StartCoroutine(ShowGameWindowWhenReady());
+               StartCoroutine(LetsPlayWhenReady());
+
+               _databaseListener = new DatabaseListener();
+               _databaseListener.GrabEntries(
+                    onReachedEnd: () =>
+                    {
+                         _isReadyToStart = true;
+                         _databaseListener.ListenToEntryChanged(_leaderboard.HandleEntryChanged);
+                         _databaseListener.ListenToEntryRemoved(_leaderboard.HandleEntryRemoved);
+                    },
+                    childFoundHandler: _leaderboard.HandleEntryFound,
+                    playtimeChildAddedHandler: _leaderboard.HandleEntryAdded);
           }
 
-          private IEnumerator ShowGameWindowWhenReady()
+          private IEnumerator LetsPlayWhenReady()
           {
                yield return new WaitForSeconds(MinHaltDurationBeforePlay);
                yield return new WaitUntil(() => _isReadyToStart);
 
-               StartCoroutine(_dependencyContainer.ConnectingWindow.Hide(onDone: () =>
-                    StartCoroutine(_dependencyContainer.GameWindowView.Show())));
+               StartCoroutine(_dependencies.ConnectingWindow.Hide(onDone: () =>
+               {
+                    _leaderboard.DisplayOnlyActualSegment();
+
+                    StartCoroutine(_dependencies.GameWindowView.Show());
+               }));
           }
 
           private void CheckFirebaseStuff()
@@ -49,18 +70,6 @@ namespace SceneWorkers
                     // todo get dumped email and password
                     // todo try to relogin
                }
-          }
-
-          [Serializable]
-          private sealed class PlayingSceneDependencyContainer
-          {
-               public IConnectingWindowView ConnectingWindow => _connectingWindow;
-               public IGameWindowView GameWindowView => _gameWindowView;
-               public ILeaderboardView LeaderboardView => _leaderboardView;
-
-               [SerializeField] private ConnectingWindowView _connectingWindow;
-               [SerializeField] private GameWindowView _gameWindowView;
-               [SerializeField] private LeaderboardView _leaderboardView;
           }
      }
 }
