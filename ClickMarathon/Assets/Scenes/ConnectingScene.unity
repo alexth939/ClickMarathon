@@ -1100,10 +1100,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _alphaLerper: {fileID: 327511169}
-  _nickNameInputField: {fileID: 0}
-  _emailInputField: {fileID: 0}
-  _passwordInputField: {fileID: 0}
-  _registerButton: {fileID: 0}
+  _nickNameInputField: {fileID: 449986534}
+  _emailInputField: {fileID: 180593882}
+  _passwordInputField: {fileID: 1089155219}
+  _registerButton: {fileID: 1864762349}
 --- !u!1 &361850327
 GameObject:
   m_ObjectHideFlags: 0
@@ -5896,7 +5896,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}

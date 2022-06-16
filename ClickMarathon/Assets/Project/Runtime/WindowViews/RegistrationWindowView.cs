@@ -14,9 +14,20 @@ namespace WindowViews
 
           public UnityEvent OnRegisterRequest => _registerButton.onClick;
 
+#if UNITY_EDITOR
+          private void Start()
+          {
+               _nickNameInputField.text = "babaYaga";
+               _emailInputField.text = "yaga@izbushka.com";
+               _passwordInputField.text = "223344";
+          }
+#endif
+
+          public void UnblockInteraction() => _registerButton.interactable = true;
+          public void BlockInteraction() => _registerButton.interactable = false;
+
+          public string GetNickname() => _nickNameInputField.text;
           public string GetEmail() => _emailInputField.text;
           public string GetPassword() => _passwordInputField.text;
-          public void UnlockInteraction() => _registerButton.interactable = true;
-          public void LockInteraction() => _registerButton.interactable = false;
      }
 }

@@ -19,6 +19,7 @@ namespace FirebaseWorkers
 
           public static bool TryGetCachedUser(out FirebaseUser user)
           {
+               Debug.Log($"GetCachedUser()");
                user = GetAuthenticationService().CurrentUser;
                return user.Equals(null);
           }
@@ -81,7 +82,7 @@ namespace FirebaseWorkers
                     }
                     else
                     {
-                         Debug.Log($"not found");
+                         Debug.Log($"score entry not found");
                          WriteScoreEntryAsync(ScoreEntryModel.GenerateDefault())
                               .ContinueWithOnMainThread(task =>
                               {

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using FirebaseWorkers;
 using Runtime.DependencyContainers;
-using FirebaseApi =  FirebaseWorkers.FirebaseCustomApi;
+using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
 namespace Runtime.ScenePresenters
 {
@@ -31,13 +31,28 @@ namespace Runtime.ScenePresenters
           {
                var welcomeWindow = _dependencies.WelcomeWindow;
                var registrationWindow = _dependencies.RegistrationWindow;
+               var registrator = new UserRegistrator();
 
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
                {
                     welcomeWindow.CleatAllListeners();
 
                     StartCoroutine(welcomeWindow.Hide(onDone: () =>
-                         StartCoroutine(registrationWindow.Show())));
+                         StartCoroutine(registrationWindow.Show(onDone: () =>
+                              registrationWindow.OnRegisterRequest.AddListener(() =>
+                              {
+                                   registrationWindow.BlockInteraction();
+                                   registrator.TryRegisterEmailAsync(args =>
+                                   {
+                                        args.Email = registrationWindow.GetEmail();
+                                        args.Password = registrationWindow.GetPassword();
+                                        args.OnSucceed = () =>
+                                             registrator.SetNickname(onSucceed: () =>
+                                                  FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                                       SwitchScene(SceneName.PlayingScene)));
+                                   });
+                              }
+                         )))));
                });
           }
 
@@ -54,17 +69,13 @@ namespace Runtime.ScenePresenters
                               authorizationWindow.OnAuthorizeRequest.AddListener(() =>
                               {
                                    authorizationWindow.BlockInteraction();
-                                   new Authorizator().TryAuthorizeWithEmail(args =>
+                                   new UserAuthorizator().TryAuthorizeEmailAsync(args =>
                                    {
                                         args.Email = authorizationWindow.GetEmail();
                                         args.Password = authorizationWindow.GetPassword();
                                         args.OnSucceed = () =>
-                                        {
                                              FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                             {
-                                                  SwitchScene(SceneName.PlayingScene);
-                                             });
-                                        };
+                                                  SwitchScene(SceneName.PlayingScene));
                                    });
                               })))));
                });
