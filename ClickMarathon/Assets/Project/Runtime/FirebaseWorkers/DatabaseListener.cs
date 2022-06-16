@@ -1,7 +1,7 @@
 ﻿using System;
 using Firebase.Database;
-using static FirebaseWorkers.FirebaseCustomApi;
 using static ProjectDefaults.ProjectConstants;
+using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
 namespace FirebaseWorkers
 {
@@ -32,20 +32,20 @@ namespace FirebaseWorkers
 
                handleEntryAdded = childFoundHandler;
 
-               DashboardRef.OrderByChild(DashboardScoreKey)
+               FirebaseApi.DashboardRef.OrderByChild(DashboardScoreKey)
                     .ChildAdded += (_, args) => TranslateChildAdded(args);
           }
 
           public void ListenToEntryChanged(Action<ScoreEntryModel> changedEntryHandler)
           {
                handleEntryChanged = changedEntryHandler;
-               DashboardRef.ChildChanged += (_, args) => TranslateChildChanged(args);
+               FirebaseApi.DashboardRef.ChildChanged += (_, args) => TranslateChildChanged(args);
           }
 
           public void ListenToEntryRemoved(Action<ScoreEntryModel> removedEntryHandler)
           {
                handleEntryRemoved = removedEntryHandler;
-               DashboardRef.ChildRemoved += (_, args) => TranslateChildRemoved(args);
+               FirebaseApi.DashboardRef.ChildRemoved += (_, args) => TranslateChildRemoved(args);
           }
 
           private void TranslateChildAdded(ChildChangedEventArgs e)

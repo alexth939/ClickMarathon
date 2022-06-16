@@ -1,7 +1,7 @@
 ﻿using FirebaseWorkers;
 using System.Collections.Generic;
 
-namespace Runtime
+namespace Runtime.Views
 {
      public interface ILeaderboardView
      {

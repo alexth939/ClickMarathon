@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using static FirebaseWorkers.FirebaseServices;
+using static ProjectDefaults.ProjectStatics;
 
-namespace Runtime
+namespace Runtime.Views
 {
      public sealed class EntryView: MonoBehaviour, IEntryView
      {

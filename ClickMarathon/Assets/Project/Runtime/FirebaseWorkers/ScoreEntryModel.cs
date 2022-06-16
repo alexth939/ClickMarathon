@@ -1,8 +1,8 @@
 ﻿using System;
 using Firebase.Database;
 using UnityEngine;
-using static FirebaseWorkers.FirebaseCustomApi;
 using static ProjectDefaults.ProjectConstants;
+using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
 namespace FirebaseWorkers
 {
@@ -39,7 +39,7 @@ namespace FirebaseWorkers
 
           public static ScoreEntryModel GenerateDefault()
           {
-               if(TryGetCachedUser(out var user) == false)
+               if(FirebaseApi.TryGetCachedUser(out var user) == false)
                {
                     Debug.Log($"No cached FirebaseUser found!");
                     return null;

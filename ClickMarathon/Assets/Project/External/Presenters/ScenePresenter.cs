@@ -3,7 +3,7 @@
 namespace UnityEngine.SceneManagement
 {
      [DisallowMultipleComponent]
-     public abstract class SceneWorker: MonoBehaviour
+     public abstract class ScenePresenter: MonoBehaviour
      {
           protected void Start()
           {

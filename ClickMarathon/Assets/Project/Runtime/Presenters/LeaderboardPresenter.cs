@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FirebaseWorkers;
-using static FirebaseWorkers.FirebaseServices;
+using Runtime.Views;
+using static ProjectDefaults.ProjectStatics;
 using static ProjectDefaults.ProjectConstants;
 
 namespace Runtime
@@ -70,8 +71,7 @@ namespace Runtime
 
           private void InsertNewEntry(ScoreEntryModel scoreEntry)
           {
-               int lastIndexOfList = _allEntries.Count - 1;
-               int indexOfBigger = _allEntries.FindUpIndex(lastIndexOfList, entry =>
+               int indexOfBigger = _allEntries.FindUpIndex(entry =>
                {
                     return entry.Score > scoreEntry.Score;
                });

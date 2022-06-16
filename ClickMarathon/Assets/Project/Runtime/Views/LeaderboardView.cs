@@ -4,7 +4,7 @@ using UnityEngine;
 using FirebaseWorkers;
 using static ProjectDefaults.ProjectConstants;
 
-namespace Runtime
+namespace Runtime.Views
 {
      public sealed class LeaderboardView: MonoBehaviour, ILeaderboardView
      {

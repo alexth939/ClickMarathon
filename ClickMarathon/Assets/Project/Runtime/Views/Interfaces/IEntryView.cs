@@ -1,6 +1,6 @@
 ﻿using FirebaseWorkers;
 
-namespace Runtime
+namespace Runtime.Views
 {
      public interface IEntryView
      {

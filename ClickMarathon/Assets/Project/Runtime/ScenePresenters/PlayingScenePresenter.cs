@@ -4,12 +4,12 @@ using UnityEngine.SceneManagement;
 using FirebaseWorkers;
 using Runtime.DependencyContainers;
 using static ProjectDefaults.ProjectConstants;
-using static FirebaseWorkers.FirebaseCustomApi;
-using static FirebaseWorkers.FirebaseServices;
+using static ProjectDefaults.ProjectStatics;
+using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
-namespace Runtime.SceneWorkers
+namespace Runtime.ScenePresenters
 {
-     public sealed class PlayingSceneWorker: SceneWorker
+     public sealed class PlayingScenePresenter: ScenePresenter
      {
           [SerializeField] private PlayingSceneContainer _dependencies;
           private ILeaderboardPresenter _leaderboard;
@@ -20,14 +20,20 @@ namespace Runtime.SceneWorkers
           protected override void EnteringScene()
           {
                CheckFirebaseStuff();
+               InitMagicPlayButtonPresenter();
+               InitLeaderboard();
 
-               _leaderboard = new LeaderboardPresenter(_dependencies.LeaderboardView);
+               StartCoroutine(LetsPlayWhenReady());
+          }
+
+          private void InitMagicPlayButtonPresenter()
+          {
                new MagicPlayButtonPresenter(
                     _dependencies.PlayButtonView,
                     _dependencies.PlayTimerView,
                     newScoreReadyHandler: entry =>
                     {
-                         WriteScoreEntryAsync(CurrentUserEntry).ContinueWith(task =>
+                         FirebaseApi.WriteScoreEntryAsync(CurrentUserEntry).ContinueWith(task =>
                          {
                               if(task.IsCompletedSuccessfully)
                                    Debug.Log($"entry writing task completed successfully!");
@@ -35,8 +41,11 @@ namespace Runtime.SceneWorkers
                                    Debug.Log($"something whent wrong. ex:{task.Exception}");
                          });
                     });
+          }
 
-               StartCoroutine(LetsPlayWhenReady());
+          private void InitLeaderboard()
+          {
+               _leaderboard = new LeaderboardPresenter(_dependencies.LeaderboardView);
 
                _databaseListener = new DatabaseListener();
                _databaseListener.GrabEntries(
@@ -65,7 +74,7 @@ namespace Runtime.SceneWorkers
 
           private void CheckFirebaseStuff()
           {
-               if(TryGetCachedUser(out _) == false)
+               if(FirebaseApi.TryGetCachedUser(out _) == false)
                {
                     // todo get dumped email and password
                     // todo try to relogin

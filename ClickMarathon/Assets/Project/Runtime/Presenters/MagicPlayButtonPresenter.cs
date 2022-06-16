@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Runtime.Views;
-using UnityEngine;
 using FirebaseWorkers;
-using static FirebaseWorkers.FirebaseServices;
+using static ProjectDefaults.ProjectStatics;
 
 namespace Runtime
 {

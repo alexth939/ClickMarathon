@@ -11,5 +11,7 @@ namespace WindowViews
      {
           UnityEvent OnRegisterButtonClicked { get; }
           UnityEvent OnSignInButtonClicked { get; }
+
+          void CleatAllListeners();
      }
 }

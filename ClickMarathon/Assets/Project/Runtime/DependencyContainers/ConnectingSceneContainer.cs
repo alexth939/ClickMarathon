@@ -5,14 +5,14 @@ using WindowViews;
 namespace Runtime.DependencyContainers
 {
      [Serializable]
-     public class ConnectingSceneContainer
+     public sealed class ConnectingSceneContainer
      {
           public IWelcomeWindowView WelcomeWindow => _welcomeWindow;
           public IRegistrationWindowView RegistrationWindow => _registrationWindow;
-          public ILogInWindowView LogInWindow => _logInWindow;
+          public IAuthorizationWindowView AuthorizationWindow => _authorizationWindow;
 
           [SerializeField] private WelcomeWindowView _welcomeWindow;
           [SerializeField] private RegistrationWindowView _registrationWindow;
-          [SerializeField] private LogInWindowView _logInWindow;
+          [SerializeField] private AuthorizationWindowView _authorizationWindow;
      }
 }

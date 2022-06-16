@@ -5,6 +5,7 @@ using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using static FirebaseWorkers.FirebaseServices;
+using static ProjectDefaults.ProjectStatics;
 using static ProjectDefaults.ProjectConstants;
 
 namespace FirebaseWorkers
@@ -37,8 +38,21 @@ namespace FirebaseWorkers
                return DashboardRef.Child(user.UserId).SetRawJsonValueAsync(fields);
           }
 
+          public static void SynchronizePlayerInfo(Action onDone)
+          {
+               GetOrCreatePlayerInfoAsync(
+                    foundHandler: currentUserEntryInfo =>
+                    {
+                         CurrentUserEntry = currentUserEntryInfo;
+                         onDone.Invoke();
+                    },
+                    taskExceptionHandler: _ => { },
+                    firebaseExceptionHandler: _ => { },
+                    cantFindHandler: () => { });
+          }
+
           // todo refactor or burn it.
-          public static void GetOrCreateUserEntryInfoAsync(Action<ScoreEntryModel> foundHandler,
+          public static void GetOrCreatePlayerInfoAsync(Action<ScoreEntryModel> foundHandler,
                Action<AggregateException> taskExceptionHandler,
                Action<DataSnapshot> firebaseExceptionHandler,
                Action cantFindHandler)
