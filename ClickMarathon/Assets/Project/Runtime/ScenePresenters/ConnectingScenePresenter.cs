@@ -12,6 +12,8 @@ namespace Runtime.ScenePresenters
 
           protected override void EnteringScene()
           {
+               Debug.LogWarning($"EnteringScene()");
+
                new StupidFirebaseValidator().CheckIfAvaliable(isAvaliable =>
                {
                     if(isAvaliable)
@@ -21,7 +23,7 @@ namespace Runtime.ScenePresenters
                     }
                     else
                     {
-                         Debug.Log($"Something is wrong with firebase");
+                         Debug.LogWarning($"Something is wrong with firebase");
                          // todo: maybe inform the user about that?
                     }
                });
@@ -33,8 +35,10 @@ namespace Runtime.ScenePresenters
                var registrationWindow = _dependencies.RegistrationWindow;
                var registrator = new UserRegistrator();
 
+               Debug.Log($"assigning OnRegisterButtonClicked");
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
                {
+                    Debug.Log($"OnRegisterButtonClicked invoked");
                     welcomeWindow.CleatAllListeners();
 
                     StartCoroutine(welcomeWindow.Hide(onDone: () =>
@@ -47,9 +51,25 @@ namespace Runtime.ScenePresenters
                                         args.Email = registrationWindow.GetEmail();
                                         args.Password = registrationWindow.GetPassword();
                                         args.OnSucceed = () =>
-                                             registrator.SetNickname(onSucceed: () =>
-                                                  FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                                       SwitchScene(SceneName.PlayingScene)));
+                                        {
+                                             Debug.Log($"setting nick");
+
+                                             //test
+                                             new UserAuthorizator().TryAuthorizeEmailAsync(args =>
+                                             {
+                                                  args.Email = registrationWindow.GetEmail();
+                                                  args.Password = registrationWindow.GetPassword();
+                                                  args.OnSucceed = () =>
+                                                       registrator.SetNickname(registrationWindow.GetNickname(),onSucceed: () =>
+                                                            FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                                                 SwitchScene(SceneName.PlayingScene)));
+                                             });
+                                             //tillHere
+
+                                             //registrator.SetNickname(onSucceed: () =>
+                                             //     FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                             //          SwitchScene(SceneName.PlayingScene)));
+                                        };
                                    });
                               }
                          )))));

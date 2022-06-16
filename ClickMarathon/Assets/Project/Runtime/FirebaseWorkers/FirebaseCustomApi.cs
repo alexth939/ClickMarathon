@@ -21,11 +21,13 @@ namespace FirebaseWorkers
           {
                Debug.Log($"GetCachedUser()");
                user = GetAuthenticationService().CurrentUser;
+               Debug.Log($"it equals:{(user == null ? "NULL" : "not NULL, ID:" + user.UserId)}");
                return user.Equals(null);
           }
 
           public static Task<DataSnapshot> ReadScoreEntryAsync()
           {
+               Debug.Log($"read score()");
                TryGetCachedUser(out var user);
                var val = DashboardRef.Child(user.UserId).GetValueAsync();
                return val;
@@ -41,15 +43,19 @@ namespace FirebaseWorkers
 
           public static void SynchronizePlayerInfo(Action onDone)
           {
+               Debug.Log($"sync player info()");
                GetOrCreatePlayerInfoAsync(
                     foundHandler: currentUserEntryInfo =>
                     {
+                         Debug.Log($"assigning currentUser");
                          CurrentUserEntry = currentUserEntryInfo;
                          onDone.Invoke();
                     },
-                    taskExceptionHandler: _ => { },
-                    firebaseExceptionHandler: _ => { },
-                    cantFindHandler: () => { });
+                    taskExceptionHandler: _ => fuck(),
+                    firebaseExceptionHandler: _ => fuck(),
+                    cantFindHandler: () => fuck());
+
+               void fuck() => Debug.Log($"fuck");
           }
 
           // todo refactor or burn it.
@@ -58,15 +64,7 @@ namespace FirebaseWorkers
                Action<DataSnapshot> firebaseExceptionHandler,
                Action cantFindHandler)
           {
-               TryGetCachedUser(out var user);
-               try
-               {
-                    Debug.Log($"my firebase user: {user.UserId}");
-               }
-               catch(Exception ex)
-               {
-                    Debug.LogError($"ex:{ex.Message}");
-               }
+               Debug.Log($"get or create entry()");
 
                ReadScoreEntryAsync().ContinueWithOnMainThread(task =>
                {
@@ -100,6 +98,7 @@ namespace FirebaseWorkers
                                              }
                                              else if(task.Result.Exists)
                                              {
+                                                  Debug.Log($"got it");
                                                   foundHandler.Invoke((ScoreEntryModel)task.Result);
                                              }
                                              else

@@ -18,23 +18,23 @@ namespace FirebaseWorkers
 
                if(args.FinishedTask.IsCanceled)
                {
-                    Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
+                    Debug.LogError("Authorization: was canceled.");
                     return;
                }
                if(args.FinishedTask.IsFaulted)
                {
-                    Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + args.FinishedTask.Exception);
+                    Debug.LogError("Authorization: encountered an error: " + args.FinishedTask.Exception);
                     return;
                }
 
                if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
                {
-                    Debug.Log("User signed in successfully");
+                    Debug.Log("Authorization: successfully");
                     args.OnSucceed.Invoke();
                }
                else
                {
-                    Debug.Log("Something went wrong.");
+                    Debug.Log("Authorization: Something went wrong.");
                }
           }
 

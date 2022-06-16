@@ -29,12 +29,12 @@ namespace FirebaseWorkers
                     });
           }
 
-          public void SetNickname(Action onSucceed)
+          public void SetNickname(string nickname, Action onSucceed)
           {
                GetAuthenticationService().CurrentUser.UpdateUserProfileAsync(
                     new Firebase.Auth.UserProfile()
                     {
-                         DisplayName = "as"
+                         DisplayName = nickname
                     }).ContinueWithOnMainThread(task =>
                     {
                          onSucceed.Invoke();

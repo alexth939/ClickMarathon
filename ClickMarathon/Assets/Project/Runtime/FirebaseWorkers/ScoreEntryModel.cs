@@ -39,11 +39,9 @@ namespace FirebaseWorkers
 
           public static ScoreEntryModel GenerateDefault()
           {
-               if(FirebaseApi.TryGetCachedUser(out var user) == false)
-               {
-                    Debug.Log($"No cached FirebaseUser found!");
-                    return null;
-               }
+               Debug.Log($"generate default()");
+
+               FirebaseApi.TryGetCachedUser(out var user);
 
                return new ScoreEntryModel()
                {
