@@ -1,8 +1,9 @@
 ﻿using UnityEngine.Events;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public interface IAuthorizationWindowView: IWindowView
+     public interface IAuthorizationWindowView: IPopupView
      {
           string GetEmail();
           string GetPassword();

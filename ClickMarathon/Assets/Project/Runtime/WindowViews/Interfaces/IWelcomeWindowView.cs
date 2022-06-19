@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.Events;
+﻿using UnityEngine.Events;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public interface IWelcomeWindowView: IWindowView
+     public interface IWelcomeWindowView: IPopupView
      {
           UnityEvent OnRegisterButtonClicked { get; }
           UnityEvent OnSignInButtonClicked { get; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FirebaseWorkers;
 using Runtime.Views;
+using External.Extensions;
 using static ProjectDefaults.ProjectStatics;
 using static ProjectDefaults.ProjectConstants;
 
@@ -71,15 +72,15 @@ namespace Runtime
 
           private void InsertNewEntry(ScoreEntryModel scoreEntry)
           {
-               int indexOfBigger = _allEntries.FindUpIndex(entry =>
+               int indexOfGreater = _allEntries.FindUpIndex(entry =>
                {
                     return entry.Score > scoreEntry.Score;
                });
-               int lastIndexTillBiggerScore = indexOfBigger == -1 ? 0 : indexOfBigger + 1;
+               int lastIndexTillGreaterScore = indexOfGreater == -1 ? 0 : indexOfGreater + 1;
 
-               Debug.Log($"indexOf new entry:{lastIndexTillBiggerScore}");
+               Debug.Log($"indexOf new entry:{lastIndexTillGreaterScore}");
 
-               _allEntries.Insert(lastIndexTillBiggerScore, scoreEntry);
+               _allEntries.Insert(lastIndexTillGreaterScore, scoreEntry);
           }
 
           // TryMoveToPrevious position is not needed.
@@ -91,17 +92,17 @@ namespace Runtime
                if(changedEntryOldIndex == 0)
                     return false;
 
-               int indexOfClosestBiggerScore =
+               int indexOfClosestGreaterScore =
                     _allEntries.FindUpIndex(startIndex: changedEntryOldIndex, entry =>
                     {
                          return entry.Score > scoreEntry.Score;
                     });
 
-               if(indexOfClosestBiggerScore == changedEntryOldIndex + 1)
+               if(indexOfClosestGreaterScore == changedEntryOldIndex + 1)
                     return false;
 
-               int newEntryIndex = indexOfClosestBiggerScore == -1 ?
-                    0 : indexOfClosestBiggerScore + 1;
+               int newEntryIndex = indexOfClosestGreaterScore == -1 ?
+                    0 : indexOfClosestGreaterScore + 1;
 
                Debug.Log($"reposition! lastIndex:{changedEntryOldIndex}, new:{newEntryIndex}");
 

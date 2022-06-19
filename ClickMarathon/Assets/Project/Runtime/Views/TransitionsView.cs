@@ -1,0 +1,114 @@
+﻿using System;
+using UnityEngine;
+using UnityEditor;
+
+namespace Runtime.Views
+{
+     class asd
+     {
+          void dsa()
+          {
+               //new TransitionsView().comple
+          }
+     }
+     interface ITransitionsView
+     {
+          void CompleteFadeIn();
+     }
+
+     [RequireComponent(typeof(Animator))]
+     public sealed class TransitionsView: MonoBehaviour, ITransitionsView
+     {
+          [SerializeField] private Animator _animator;
+          private ContentState _currentState = default;
+
+          private event Action OnFadeInDone;
+          private event Action OnFadeOutDone;
+
+          private enum ContentState
+          {
+               Hidden,
+               Visible
+          }
+
+          private bool IsHidden
+          {
+               get
+               {
+                    if(_currentState == ContentState.Hidden)
+                    {
+#if UNITY_EDITOR
+                         EditorGUIUtility.PingObject(this);
+#endif
+                         Debug.LogError($"Already hidden.");
+                         return true;
+                    }
+
+                    return false;
+               }
+          }
+
+          private bool IsVisible
+          {
+               get
+               {
+                    if(_currentState == ContentState.Visible)
+                    {
+#if UNITY_EDITOR
+                         EditorGUIUtility.PingObject(this);
+#endif
+                         Debug.LogError($"Already visible.");
+                         return true;
+                    }
+
+                    return false;
+               }
+          }
+
+          public void FadeIn(Action onDone = null)
+          {
+               if(IsVisible)
+                    return;
+
+               OnFadeInDone = () =>
+               {
+                    onDone?.Invoke();
+                    OnFadeInDone = null;
+               };
+
+               _animator.SetBool("Entering", true);
+          }
+
+          public void FadeOut(Action onDone = null)
+          {
+               if(IsHidden)
+                    return;
+
+               OnFadeOutDone = () =>
+               {
+                    onDone?.Invoke();
+                    OnFadeOutDone = null;
+               };
+
+               _animator.SetBool("Exiting", true);
+          }
+
+          public void CompleteFadeIn()
+          {
+               if(IsVisible)
+                    return;
+
+               _currentState = ContentState.Visible;
+               OnFadeInDone?.Invoke();
+          }
+
+          public void CompleteFadeOut()
+          {
+               if(IsHidden)
+                    return;
+
+               _currentState = ContentState.Hidden;
+               OnFadeOutDone?.Invoke();
+          }
+     }
+}

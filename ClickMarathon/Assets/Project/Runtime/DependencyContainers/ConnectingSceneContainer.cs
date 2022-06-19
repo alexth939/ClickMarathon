@@ -1,12 +1,14 @@
 ﻿using System;
 using UnityEngine;
-using WindowViews;
+using Runtime.Views;
+using Runtime.WindowViews;
 
 namespace Runtime.DependencyContainers
 {
      [Serializable]
      public sealed class ConnectingSceneContainer
      {
+          public TransitionsView TransitionsView;
           public IWelcomeWindowView WelcomeWindow => _welcomeWindow;
           public IRegistrationWindowView RegistrationWindow => _registrationWindow;
           public IAuthorizationWindowView AuthorizationWindow => _authorizationWindow;

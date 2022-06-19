@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using WindowViews;
+using Runtime.WindowViews;
 using Runtime.Views;
 
 namespace Runtime.DependencyContainers

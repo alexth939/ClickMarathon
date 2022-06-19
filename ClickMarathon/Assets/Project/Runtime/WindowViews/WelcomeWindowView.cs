@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
      [RequireComponent(typeof(CanvasGroup))]
-     public sealed class WelcomeWindowView: WindowView, IWelcomeWindowView
+     public sealed class WelcomeWindowView: PopupView, IWelcomeWindowView
      {
           [SerializeField] private Button _registerButton;
           [SerializeField] private Button _signInButton;

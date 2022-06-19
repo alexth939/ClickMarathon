@@ -1,8 +1,9 @@
 ﻿using UnityEngine.Events;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public interface IRegistrationWindowView: IWindowView
+     public interface IRegistrationWindowView: IPopupView
      {
           UnityEvent OnRegisterRequest { get; }
 

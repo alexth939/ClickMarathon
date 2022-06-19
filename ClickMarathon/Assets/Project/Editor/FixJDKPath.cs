@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
 
-public class FixJDKPath: MonoBehaviour
+public class FixJDKPath//: MonoBehaviour
 {
      [RuntimeInitializeOnLoadMethod()]
      static void FixJDKPathMethod()
      {
-          Debug.Log($"fixing JDK");
+          Debug.Log($"fixing JDK path");
 
           string newJDKPath = EditorApplication.applicationPath.Replace("Unity.exe", "Data/PlaybackEngines/AndroidPlayer/OpenJDK");
 

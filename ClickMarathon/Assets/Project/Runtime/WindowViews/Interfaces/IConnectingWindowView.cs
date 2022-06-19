@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public interface IConnectingWindowView: IWindowView
+     public interface IConnectingWindowView: IPopupView
      {
      }
 }

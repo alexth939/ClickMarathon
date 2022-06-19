@@ -64,12 +64,12 @@ namespace Runtime.ScenePresenters
                yield return new WaitForSeconds(MinHaltDurationBeforePlay);
                yield return new WaitUntil(() => _isReadyToStart);
 
-               StartCoroutine(_dependencies.ConnectingWindow.Hide(onDone: () =>
+               _dependencies.ConnectingWindow.Hide(onDone: () =>
                {
                     _leaderboard.DisplayOnlyActualSegment();
 
-                    StartCoroutine(_dependencies.GameWindowView.Show());
-               }));
+                    _dependencies.GameWindowView.Show();
+               });
           }
 
           private void CheckFirebaseStuff()

@@ -12,6 +12,7 @@ namespace Runtime.ScenePresenters
 
           protected override void EnteringScene()
           {
+               _dependencies.TransitionsView.FadeIn(() => Debug.Log($"now visible"));
                Debug.LogWarning($"EnteringScene()");
 
                new StupidFirebaseValidator().CheckIfAvaliable(isAvaliable =>
@@ -41,8 +42,8 @@ namespace Runtime.ScenePresenters
                     Debug.Log($"OnRegisterButtonClicked invoked");
                     welcomeWindow.CleatAllListeners();
 
-                    StartCoroutine(welcomeWindow.Hide(onDone: () =>
-                         StartCoroutine(registrationWindow.Show(onDone: () =>
+                    welcomeWindow.Hide(onDone: () =>
+                         registrationWindow.Show(onDone: () =>
                               registrationWindow.OnRegisterRequest.AddListener(() =>
                               {
                                    registrationWindow.BlockInteraction();
@@ -55,24 +56,26 @@ namespace Runtime.ScenePresenters
                                              Debug.Log($"setting nick");
 
                                              //test
-                                             new UserAuthorizator().TryAuthorizeEmailAsync(args =>
-                                             {
-                                                  args.Email = registrationWindow.GetEmail();
-                                                  args.Password = registrationWindow.GetPassword();
-                                                  args.OnSucceed = () =>
-                                                       registrator.SetNickname(registrationWindow.GetNickname(),onSucceed: () =>
-                                                            FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                                                 SwitchScene(SceneName.PlayingScene)));
-                                             });
+                                             //new UserAuthorizator().TryAuthorizeEmailAsync(args =>
+                                             //{
+                                             //     args.Email = registrationWindow.GetEmail();
+                                             //     args.Password = registrationWindow.GetPassword();
+                                             //     args.OnSucceed = () =>
+                                             //          registrator.SetNickname(registrationWindow.GetNickname(), onSucceed: () =>
+                                             //                FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                             //                     SwitchScene(SceneName.PlayingScene)));
+                                             //});
                                              //tillHere
 
-                                             //registrator.SetNickname(onSucceed: () =>
-                                             //     FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                             //          SwitchScene(SceneName.PlayingScene)));
+                                             registrator
+                                                  .SetNickname(registrationWindow.GetNickname(),
+                                                       onSucceed: () =>
+                                                  FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                                       SwitchScene(SceneName.PlayingScene)));
                                         };
                                    });
                               }
-                         )))));
+                         )));
                });
           }
 
@@ -84,8 +87,8 @@ namespace Runtime.ScenePresenters
                welcomeWindow.OnSignInButtonClicked.AddListener(() =>
                {
                     welcomeWindow.CleatAllListeners();
-                    StartCoroutine(welcomeWindow.Hide(onDone: () =>
-                         StartCoroutine(authorizationWindow.Show(onDone: () =>
+                    welcomeWindow.Hide(onDone: () =>
+                         authorizationWindow.Show(onDone: () =>
                               authorizationWindow.OnAuthorizeRequest.AddListener(() =>
                               {
                                    authorizationWindow.BlockInteraction();
@@ -97,7 +100,7 @@ namespace Runtime.ScenePresenters
                                              FirebaseApi.SynchronizePlayerInfo(onDone: () =>
                                                   SwitchScene(SceneName.PlayingScene));
                                    });
-                              })))));
+                              })));
                });
           }
      }

@@ -3,28 +3,31 @@
 using System;
 using System.Collections.Generic;
 
-public static class CommonExtensions
+namespace External.Extensions
 {
-     public static bool NotEquals<T>(this T Object, T OtherObject)
+     public static class CommonExtensions
      {
-          return !Object.Equals(OtherObject);
-     }
-
-     public static int FindUpIndex<T>(this List<T> collection, Predicate<T> match)
-     {
-          int startIndex = collection.Count - 1;
-          return FindUpIndex(collection, startIndex, match);
-     }
-
-     public static int FindUpIndex<T>(this List<T> collection, int startIndex, Predicate<T> match)
-     {
-          for(int i = startIndex; i >= 0; i--)
+          public static bool NotEquals<T>(this T Object, T OtherObject)
           {
-               if(match(collection[i]))
-               {
-                    return i;
-               }
+               return !Object.Equals(OtherObject);
           }
-          return -1;
+
+          public static int FindUpIndex<T>(this List<T> collection, Predicate<T> match)
+          {
+               int startIndex = collection.Count - 1;
+               return FindUpIndex(collection, startIndex, match);
+          }
+
+          public static int FindUpIndex<T>(this List<T> collection, int startIndex, Predicate<T> match)
+          {
+               for(int i = startIndex; i >= 0; i--)
+               {
+                    if(match(collection[i]))
+                    {
+                         return i;
+                    }
+               }
+               return -1;
+          }
      }
 }

@@ -3,10 +3,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public sealed class AuthorizationWindowView: WindowView, IAuthorizationWindowView
+     public sealed class AuthorizationWindowView: PopupView, IAuthorizationWindowView
      {
           [SerializeField] private TMP_InputField _emailInputField;
           [SerializeField] private TMP_InputField _passwordInputField;

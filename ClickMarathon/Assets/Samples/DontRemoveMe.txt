@@ -1,0 +1,1 @@
+if u want this to work with childs that contain [****ing] text mesh pro, dont remove the folder from "assets\"

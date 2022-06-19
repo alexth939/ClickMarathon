@@ -2,10 +2,11 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public sealed class RegistrationWindowView: WindowView, IRegistrationWindowView
+     public sealed class RegistrationWindowView: PopupView, IRegistrationWindowView
      {
           [SerializeField] private TMP_InputField _nickNameInputField;
           [SerializeField] private TMP_InputField _emailInputField;

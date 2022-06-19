@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Popups;
 
-namespace WindowViews
+namespace Runtime.WindowViews
 {
-     public sealed class GameWindowView: WindowView, IGameWindowView
+     public sealed class GameWindowView: PopupView, IGameWindowView
      {
 
      }
