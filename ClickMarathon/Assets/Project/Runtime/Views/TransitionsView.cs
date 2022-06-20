@@ -4,18 +4,6 @@ using UnityEditor;
 
 namespace Runtime.Views
 {
-     class asd
-     {
-          void dsa()
-          {
-               //new TransitionsView().comple
-          }
-     }
-     interface ITransitionsView
-     {
-          void CompleteFadeIn();
-     }
-
      [RequireComponent(typeof(Animator))]
      public sealed class TransitionsView: MonoBehaviour, ITransitionsView
      {
@@ -65,7 +53,10 @@ namespace Runtime.Views
                }
           }
 
-          public void FadeIn(Action onDone = null)
+          /// <summary>
+          /// Don't forget to add an animation event key:"CompleteFadeIn()" to your animation.
+          /// </summary>
+          public void FadeInAsync(Action onDone = null)
           {
                if(IsVisible)
                     return;
@@ -79,7 +70,10 @@ namespace Runtime.Views
                _animator.SetBool("Entering", true);
           }
 
-          public void FadeOut(Action onDone = null)
+          /// <summary>
+          /// Don't forget to add an animation event key:"CompleteFadeOut()" to your animation.
+          /// </summary>
+          public void FadeOutAsync(Action onDone = null)
           {
                if(IsHidden)
                     return;

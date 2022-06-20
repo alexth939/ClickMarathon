@@ -14,16 +14,16 @@ namespace Runtime.ScenePresenters
           [SerializeField] private PlayingSceneContainer _dependencies;
           private ILeaderboardPresenter _leaderboard;
           private DatabaseListener _databaseListener;
-
           private bool _isReadyToStart = false;
 
           protected override void EnteringScene()
           {
+               _dependencies.TransitionsView.FadeInAsync(onDone:()=>
+                    StartCoroutine(TransitToLeaderboardWhenReady()));
+
                CheckFirebaseStuff();
                InitMagicPlayButtonPresenter();
                InitLeaderboard();
-
-               StartCoroutine(LetsPlayWhenReady());
           }
 
           private void InitMagicPlayButtonPresenter()
@@ -59,7 +59,7 @@ namespace Runtime.ScenePresenters
                     playtimeChildAddedHandler: _leaderboard.HandleEntryAdded);
           }
 
-          private IEnumerator LetsPlayWhenReady()
+          private IEnumerator TransitToLeaderboardWhenReady()
           {
                yield return new WaitForSeconds(MinHaltDurationBeforePlay);
                yield return new WaitUntil(() => _isReadyToStart);

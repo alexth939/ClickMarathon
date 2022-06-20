@@ -8,7 +8,7 @@ namespace Runtime.DependencyContainers
      [Serializable]
      public sealed class ConnectingSceneContainer
      {
-          public TransitionsView TransitionsView;
+          public ITransitionsView TransitionsView => _transitionsView;
           public IWelcomeWindowView WelcomeWindow => _welcomeWindow;
           public IRegistrationWindowView RegistrationWindow => _registrationWindow;
           public IAuthorizationWindowView AuthorizationWindow => _authorizationWindow;
@@ -16,5 +16,6 @@ namespace Runtime.DependencyContainers
           [SerializeField] private WelcomeWindowView _welcomeWindow;
           [SerializeField] private RegistrationWindowView _registrationWindow;
           [SerializeField] private AuthorizationWindowView _authorizationWindow;
+          [SerializeField] private TransitionsView _transitionsView;
      }
 }

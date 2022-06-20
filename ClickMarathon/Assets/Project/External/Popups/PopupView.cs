@@ -75,30 +75,34 @@ namespace Popups
           bool IsNotCompletelyRevealed =>
                gameObject.activeSelf == false || _alphaLerper.alpha < AlmostOne;
 
-          public void Show(Action onDone = null, float duration = DefaultShowDuration)
+          public void Show(float? duration = null, Action onDone = null)
           {
                if(IsNotReadyToShow)
                     return;
 
+               duration ??= DefaultShowDuration;
+
                SetupObjectToShow();
-               StartCoroutine(ShowWindow(onDone: () =>
+               StartCoroutine(ShowWindow(duration.Value, onDone: () =>
                {
                     FinalizeShow();
                     onDone?.Invoke();
-               }, duration));
+               }));
           }
 
-          public void Hide(Action onDone = null, float duration = DefaultHideDuration)
+          public void Hide(float? duration = null, Action onDone = null)
           {
                if(IsNotReadyToHide)
                     return;
 
+               duration ??= DefaultHideDuration;
+
                SetupObjectToHide();
-               StartCoroutine(HideWindow(onDone: () =>
+               StartCoroutine(HideWindow(duration.Value, onDone: () =>
                {
                     FinalizeHide();
                     onDone?.Invoke();
-               }, duration));
+               }));
           }
 
           private void SetupObjectToShow()
@@ -127,7 +131,7 @@ namespace Popups
                _isTransitting = false;
           }
 
-          private IEnumerator ShowWindow(Action onDone, float duration)
+          private IEnumerator ShowWindow(float duration, Action onDone)
           {
                for(float i = 0; i < duration; i += Time.deltaTime)
                {
@@ -139,7 +143,7 @@ namespace Popups
                onDone.Invoke();
           }
 
-          private IEnumerator HideWindow(Action onDone, float duration)
+          private IEnumerator HideWindow(float duration, Action onDone)
           {
                for(float i = duration; i > 0; i -= Time.deltaTime)
                {

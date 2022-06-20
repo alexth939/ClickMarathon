@@ -24,6 +24,7 @@ namespace FirebaseWorkers
                if(args.FinishedTask.IsFaulted)
                {
                     Debug.LogError("Authorization: encountered an error: " + args.FinishedTask.Exception);
+                    args.OnFailed?.Invoke();
                     return;
                }
 

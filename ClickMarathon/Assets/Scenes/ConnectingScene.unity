@@ -5173,10 +5173,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dependencies:
-    TransitionsView: {fileID: 527618253}
     _welcomeWindow: {fileID: 1136908285}
     _registrationWindow: {fileID: 327511170}
     _authorizationWindow: {fileID: 308426463}
+    _transitionsView: {fileID: 527618253}
 --- !u!4 &1713926216
 Transform:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using FirebaseWorkers;
 using Runtime.DependencyContainers;
+using Popups;
 using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
 namespace Runtime.ScenePresenters
@@ -12,7 +13,7 @@ namespace Runtime.ScenePresenters
 
           protected override void EnteringScene()
           {
-               _dependencies.TransitionsView.FadeIn(() => Debug.Log($"now visible"));
+               _dependencies.TransitionsView.FadeInAsync(() => Debug.Log($"now visible"));
                Debug.LogWarning($"EnteringScene()");
 
                new StupidFirebaseValidator().CheckIfAvaliable(isAvaliable =>
@@ -24,8 +25,7 @@ namespace Runtime.ScenePresenters
                     }
                     else
                     {
-                         Debug.LogWarning($"Something is wrong with firebase");
-                         // todo: maybe inform the user about that?
+                         DialogPopup.ShowDialog("Something is wrong with firebase");
                     }
                });
           }
@@ -98,7 +98,13 @@ namespace Runtime.ScenePresenters
                                         args.Password = authorizationWindow.GetPassword();
                                         args.OnSucceed = () =>
                                              FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                                  SwitchScene(SceneName.PlayingScene));
+                                                  _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
+                                                       SwitchScene(SceneName.PlayingScene)));
+                                        args.OnFailed = () =>
+                                        {
+                                             DialogPopup.ShowDialog("Failed to login.");
+                                             authorizationWindow.UnblockInteraction();
+                                        };
                                    });
                               })));
                });

@@ -14,6 +14,7 @@ namespace Runtime.DependencyContainers
 
           public IPlayButtonView PlayButtonView => _playButtonView;
           public IPlayTimerView PlayTimerView => _playTimerView;
+          public ITransitionsView TransitionsView => _transitionsView;
 
           [SerializeField] private ConnectingWindowView _connectingWindow;
           [SerializeField] private GameWindowView _gameWindowView;
@@ -21,5 +22,6 @@ namespace Runtime.DependencyContainers
 
           [SerializeField] private PlayButtonView _playButtonView;
           [SerializeField] private PlayTimerView _playTimerView;
+          [SerializeField] private TransitionsView _transitionsView;
      }
 }

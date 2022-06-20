@@ -49,8 +49,17 @@ namespace Runtime
           {
                Debug.Log($"LeaderboardPresenter: entry changed:{scoreEntry.ToString()}");
 
-               if(TryMoveEntryToNextPosition(scoreEntry))
-                    DisplayOnlyActualSegment();
+               UpdateCachedEntry(scoreEntry, out int changedEntryIndex);
+
+               TryMoveEntryToNextPosition(scoreEntry, changedEntryIndex);
+
+               DisplayOnlyActualSegment();
+          }
+
+          private void UpdateCachedEntry(ScoreEntryModel scoreEntry, out int entryIndex)
+          {
+               entryIndex = _allEntries.FindIndex(entry => entry.ID == scoreEntry.ID);
+               _allEntries[entryIndex].Score = scoreEntry.Score;
           }
 
           public void HandleEntryAdded(ScoreEntryModel scoreEntry)
@@ -85,28 +94,26 @@ namespace Runtime
 
           // TryMoveToPrevious position is not needed.
           // but remember, dont downgrade entries manually; or create handler.
-          private bool TryMoveEntryToNextPosition(ScoreEntryModel scoreEntry)
+          private bool TryMoveEntryToNextPosition(ScoreEntryModel scoreEntry, int changedEntryIndex)
           {
-               int changedEntryOldIndex = _allEntries.FindIndex(entry => entry.ID == scoreEntry.ID);
-
-               if(changedEntryOldIndex == 0)
+               if(changedEntryIndex == 0)
                     return false;
 
                int indexOfClosestGreaterScore =
-                    _allEntries.FindUpIndex(startIndex: changedEntryOldIndex, entry =>
+                    _allEntries.FindUpIndex(startIndex: changedEntryIndex, entry =>
                     {
                          return entry.Score > scoreEntry.Score;
                     });
 
-               if(indexOfClosestGreaterScore == changedEntryOldIndex + 1)
+               if(indexOfClosestGreaterScore == changedEntryIndex + 1)
                     return false;
 
                int newEntryIndex = indexOfClosestGreaterScore == -1 ?
                     0 : indexOfClosestGreaterScore + 1;
 
-               Debug.Log($"reposition! lastIndex:{changedEntryOldIndex}, new:{newEntryIndex}");
+               Debug.Log($"reposition! lastIndex:{changedEntryIndex}, new:{newEntryIndex}");
 
-               _allEntries.RemoveAt(changedEntryOldIndex);
+               _allEntries.RemoveAt(changedEntryIndex);
                _allEntries.Insert(newEntryIndex, scoreEntry);
                return true;
           }
