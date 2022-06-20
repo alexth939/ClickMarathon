@@ -5,6 +5,7 @@ namespace Runtime.WindowViews
 {
      public interface IRegistrationWindowView: IPopupView
      {
+          UnityEvent OnGoBackRequest { get; }
           UnityEvent OnRegisterRequest { get; }
 
           void BlockInteraction();

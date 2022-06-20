@@ -10,6 +10,7 @@ namespace Runtime.WindowViews
           void UnblockInteraction();
           void BlockInteraction();
 
+          UnityEvent OnGoBackRequest { get; }
           UnityEvent OnAuthorizeRequest { get; }
      }
 }

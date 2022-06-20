@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using FirebaseWorkers;
@@ -13,13 +14,14 @@ namespace Runtime.ScenePresenters
 
           protected override void EnteringScene()
           {
-               _dependencies.TransitionsView.FadeInAsync(() => Debug.Log($"now visible"));
-               Debug.LogWarning($"EnteringScene()");
+               _dependencies.TransitionsView.FadeInAsync();
 
                new StupidFirebaseValidator().CheckIfAvaliable(isAvaliable =>
                {
                     if(isAvaliable)
                     {
+                         InitBackFromRegistrationScenario();
+                         InitBackFromAuthorizationScenario();
                          InitRegistrationScenario();
                          InitAuthorizationScenario();
                     }
@@ -30,20 +32,50 @@ namespace Runtime.ScenePresenters
                });
           }
 
+          private void BackToWelcomeWindow(IPopupView from)
+          {
+               var welcomeWindow = _dependencies.WelcomeWindow;
+
+               from.Hide(onDone: () =>
+                    welcomeWindow.Show(onDone: () =>
+                         welcomeWindow.UnblockInteraction()));
+          }
+
+          private void InitBackFromRegistrationScenario()
+          {
+               var registrationWindow = _dependencies.RegistrationWindow;
+
+               registrationWindow.OnGoBackRequest.AddListener(() =>
+               {
+                    registrationWindow.BlockInteraction();
+                    BackToWelcomeWindow(from: registrationWindow);
+               });
+          }
+
+          private void InitBackFromAuthorizationScenario()
+          {
+               var authorizationWindow = _dependencies.AuthorizationWindow;
+
+               authorizationWindow.OnGoBackRequest.AddListener(() =>
+               {
+                    authorizationWindow.BlockInteraction();
+                    BackToWelcomeWindow(from: authorizationWindow);
+               });
+          }
+
           private void InitRegistrationScenario()
           {
                var welcomeWindow = _dependencies.WelcomeWindow;
                var registrationWindow = _dependencies.RegistrationWindow;
                var registrator = new UserRegistrator();
 
-               Debug.Log($"assigning OnRegisterButtonClicked");
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
                {
-                    Debug.Log($"OnRegisterButtonClicked invoked");
-                    welcomeWindow.CleatAllListeners();
-
+                    welcomeWindow.BlockInteraction();
                     welcomeWindow.Hide(onDone: () =>
                          registrationWindow.Show(onDone: () =>
+                         {
+                              registrationWindow.UnblockInteraction();
                               registrationWindow.OnRegisterRequest.AddListener(() =>
                               {
                                    registrationWindow.BlockInteraction();
@@ -53,29 +85,23 @@ namespace Runtime.ScenePresenters
                                         args.Password = registrationWindow.GetPassword();
                                         args.OnSucceed = () =>
                                         {
-                                             Debug.Log($"setting nick");
-
-                                             //test
-                                             //new UserAuthorizator().TryAuthorizeEmailAsync(args =>
-                                             //{
-                                             //     args.Email = registrationWindow.GetEmail();
-                                             //     args.Password = registrationWindow.GetPassword();
-                                             //     args.OnSucceed = () =>
-                                             //          registrator.SetNickname(registrationWindow.GetNickname(), onSucceed: () =>
-                                             //                FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                             //                     SwitchScene(SceneName.PlayingScene)));
-                                             //});
-                                             //tillHere
-
-                                             registrator
-                                                  .SetNickname(registrationWindow.GetNickname(),
-                                                       onSucceed: () =>
-                                                  FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                                       SwitchScene(SceneName.PlayingScene)));
+                                             registrator.SetNickname(registrationWindow.GetNickname(),
+                                                  onSucceed: () =>
+                                                  {
+                                                       CredentialsSaver.RememberMe(args.Email, args.Password);
+                                                       FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                                            _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
+                                                                 SwitchScene(SceneName.PlayingScene)));
+                                                  });
+                                        };
+                                        args.OnFailed = message =>
+                                        {
+                                             DialogPopup.ShowDialog(message, onOK: () =>
+                                                   registrationWindow.UnblockInteraction());
                                         };
                                    });
-                              }
-                         )));
+                              });
+                         }));
                });
           }
 
@@ -86,9 +112,11 @@ namespace Runtime.ScenePresenters
 
                welcomeWindow.OnSignInButtonClicked.AddListener(() =>
                {
-                    welcomeWindow.CleatAllListeners();
+                    welcomeWindow.BlockInteraction();
                     welcomeWindow.Hide(onDone: () =>
                          authorizationWindow.Show(onDone: () =>
+                         {
+                              authorizationWindow.UnblockInteraction();
                               authorizationWindow.OnAuthorizeRequest.AddListener(() =>
                               {
                                    authorizationWindow.BlockInteraction();
@@ -97,16 +125,20 @@ namespace Runtime.ScenePresenters
                                         args.Email = authorizationWindow.GetEmail();
                                         args.Password = authorizationWindow.GetPassword();
                                         args.OnSucceed = () =>
+                                        {
+                                             CredentialsSaver.RememberMe(args.Email, args.Password);
                                              FirebaseApi.SynchronizePlayerInfo(onDone: () =>
                                                   _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
                                                        SwitchScene(SceneName.PlayingScene)));
+                                        };
                                         args.OnFailed = message =>
                                         {
-                                             DialogPopup.ShowDialog($"Failed to login.\n{message}", onOK: () =>
+                                             DialogPopup.ShowDialog(message, onOK: () =>
                                                    authorizationWindow.UnblockInteraction());
                                         };
                                    });
-                              })));
+                              });
+                         }));
                });
           }
      }

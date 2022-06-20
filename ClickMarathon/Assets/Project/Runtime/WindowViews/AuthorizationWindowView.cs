@@ -11,22 +11,35 @@ namespace Runtime.WindowViews
      {
           [SerializeField] private TMP_InputField _emailInputField;
           [SerializeField] private TMP_InputField _passwordInputField;
+          [SerializeField] private Button _backButton;
           [SerializeField] private Button _signInButon;
 
+          public UnityEvent OnGoBackRequest => _backButton.onClick;
           public UnityEvent OnAuthorizeRequest => _signInButon.onClick;
 
-#if UNITY_EDITOR
           private void Start()
           {
-               _emailInputField.text = "tester@tester.com";
-               _passwordInputField.text = "tester";
+               (_emailInputField.text, _passwordInputField.text) = new CredentialsLoader();
+               //_emailInputField.text = "tester@tester.com";
+               //_passwordInputField.text = "tester";
           }
-#endif
 
           public string GetEmail() => _emailInputField.text;
           public string GetPassword() => _passwordInputField.text;
-          public void UnblockInteraction() => _signInButon.interactable = true;
-          public void BlockInteraction() => _signInButon.interactable = false;
+          public void UnblockInteraction()
+          {
+               _emailInputField.interactable =
+                    _passwordInputField.interactable =
+                         _backButton.interactable =
+                              _signInButon.interactable = true;
+          }
+          public void BlockInteraction()
+          {
+               _emailInputField.interactable =
+                    _passwordInputField.interactable =
+                         _backButton.interactable =
+                              _signInButon.interactable = false;
+          }
 
           // todo implement me
           public void PlayConnectingAnimation()

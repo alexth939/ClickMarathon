@@ -16,5 +16,8 @@
           public const string FirebaseDashboardPath = "Dashboard";
           public const string DashboardNameKey = "Name";
           public const string DashboardScoreKey = "Score";
+
+          public const string LastUsedEmailKey = "LastEmail";
+          public const string LastUsedPasswordKey = "LastPassword";
      }
 }

@@ -27,7 +27,7 @@ namespace FirebaseWorkers
                     var lastInnerException = exception.GetLastInner();
 
                     Debug.LogError("Authorization: encountered an error: " + exception);
-                    args.OnFailed?.Invoke(lastInnerException.ToString());
+                    args.OnFailed?.Invoke(lastInnerException.Message);
                }
                else if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
                {
