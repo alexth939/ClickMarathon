@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using Firebase.Auth;
+using External.Signatures;
+using External.Extensions;
 
 namespace FirebaseWorkers
 {
@@ -9,7 +11,6 @@ namespace FirebaseWorkers
      {
           // todo refactor.
           // todo try handle exceptions.
-          // todo inform in the user "Message Window".
           public static void CatchAuthorizationAttemptResult(
                Action<AuthorizationAttemptArgs> argumentsSetter)
           {
@@ -19,16 +20,16 @@ namespace FirebaseWorkers
                if(args.FinishedTask.IsCanceled)
                {
                     Debug.LogError("Authorization: was canceled.");
-                    return;
                }
-               if(args.FinishedTask.IsFaulted)
+               else if(args.FinishedTask.IsFaulted)
                {
-                    Debug.LogError("Authorization: encountered an error: " + args.FinishedTask.Exception);
-                    args.OnFailed?.Invoke();
-                    return;
-               }
+                    var exception = args.FinishedTask.Exception;
+                    var lastInnerException = exception.GetLastInner();
 
-               if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
+                    Debug.LogError("Authorization: encountered an error: " + exception);
+                    args.OnFailed?.Invoke(lastInnerException.ToString());
+               }
+               else if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
                {
                     Debug.Log("Authorization: successfully");
                     args.OnSucceed.Invoke();
@@ -43,7 +44,7 @@ namespace FirebaseWorkers
           {
                public Task<FirebaseUser> FinishedTask;
                public Action OnSucceed;
-               public Action OnFailed;
+               public ExceptionCallback OnFailed;
           }
      }
 }

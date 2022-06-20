@@ -100,10 +100,10 @@ namespace Runtime.ScenePresenters
                                              FirebaseApi.SynchronizePlayerInfo(onDone: () =>
                                                   _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
                                                        SwitchScene(SceneName.PlayingScene)));
-                                        args.OnFailed = () =>
+                                        args.OnFailed = message =>
                                         {
-                                             DialogPopup.ShowDialog("Failed to login.");
-                                             authorizationWindow.UnblockInteraction();
+                                             DialogPopup.ShowDialog($"Failed to login.\n{message}", onOK: () =>
+                                                   authorizationWindow.UnblockInteraction());
                                         };
                                    });
                               })));

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Firebase.Extensions;
+using External.Signatures;
 using static FirebaseWorkers.FirebaseServices;
 using ExceptionHandler = FirebaseWorkers.FirebaseExceptionHandler;
 
@@ -31,7 +32,8 @@ namespace FirebaseWorkers
                public string Email;
                public string Password;
                public Action OnSucceed;
-               public Action OnFailed = null;
+               //public Action OnFailed = null;
+               public ExceptionCallback OnFailed = null;
           }
      }
 }
