@@ -21,7 +21,8 @@ namespace FirebaseWorkers
           {
                Debug.Log($"GetCachedUser()");
                user = GetAuthenticationService().CurrentUser;
-               Debug.Log($"it equals:{(user == null ? "NULL" : "not NULL, ID:" + user.UserId)}");
+               Debug.Log($"it equals:{(user == null ? "NULL" : "not NULL, ID:" + user.UserId)}" +
+                    $" Nick:{user.DisplayName}");
                return user.Equals(null);
           }
 
@@ -41,10 +42,10 @@ namespace FirebaseWorkers
                return DashboardRef.Child(user.UserId).SetRawJsonValueAsync(fields);
           }
 
-          public static void SynchronizePlayerInfo(Action onDone)
+          public static void SynchronizePlayerEntry(Action onDone)
           {
                Debug.Log($"sync player info()");
-               GetOrCreatePlayerInfoAsync(
+               GetOrCreatePlayerEntryAsync(
                     foundHandler: currentUserEntryInfo =>
                     {
                          Debug.Log($"assigning currentUser");
@@ -59,7 +60,7 @@ namespace FirebaseWorkers
           }
 
           // todo refactor or burn it.
-          public static void GetOrCreatePlayerInfoAsync(Action<ScoreEntryModel> foundHandler,
+          public static void GetOrCreatePlayerEntryAsync(Action<ScoreEntryModel> foundHandler,
                Action<AggregateException> taskExceptionHandler,
                Action<DataSnapshot> firebaseExceptionHandler,
                Action cantFindHandler)

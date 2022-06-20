@@ -88,10 +88,25 @@ namespace Runtime.ScenePresenters
                                              registrator.SetNickname(registrationWindow.GetNickname(),
                                                   onSucceed: () =>
                                                   {
-                                                       CredentialsSaver.RememberMe(args.Email, args.Password);
-                                                       FirebaseApi.SynchronizePlayerInfo(onDone: () =>
-                                                            _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
-                                                                 SwitchScene(SceneName.PlayingScene)));
+                                                       // todo refactor
+                                                       FirebaseServices.GetAuthenticationService().SignOut();
+                                                       new UserAuthorizator().TryAuthorizeEmailAsync(args =>
+                                                       {
+                                                            args.Email = registrationWindow.GetEmail();
+                                                            args.Password = registrationWindow.GetPassword();
+                                                            args.OnSucceed = () =>
+                                                            {
+                                                                 CredentialsSaver.RememberMe(args.Email, args.Password);
+                                                                 FirebaseApi.SynchronizePlayerEntry(onDone: () =>
+                                                                      _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
+                                                                           SwitchScene(SceneName.PlayingScene)));
+                                                            };
+                                                            args.OnFailed = message =>
+                                                            {
+                                                                 DialogPopup.ShowDialog(message, onOK: () =>
+                                                                       registrationWindow.UnblockInteraction());
+                                                            };
+                                                       });
                                                   });
                                         };
                                         args.OnFailed = message =>
@@ -127,7 +142,7 @@ namespace Runtime.ScenePresenters
                                         args.OnSucceed = () =>
                                         {
                                              CredentialsSaver.RememberMe(args.Email, args.Password);
-                                             FirebaseApi.SynchronizePlayerInfo(onDone: () =>
+                                             FirebaseApi.SynchronizePlayerEntry(onDone: () =>
                                                   _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
                                                        SwitchScene(SceneName.PlayingScene)));
                                         };
