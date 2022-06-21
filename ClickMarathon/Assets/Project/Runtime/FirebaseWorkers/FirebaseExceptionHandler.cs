@@ -4,46 +4,68 @@ using UnityEngine;
 using Firebase.Auth;
 using External.Signatures;
 using External.Extensions;
+using Firebase.Database;
+using Firebase.Extensions;
 
 namespace FirebaseWorkers
 {
-     public sealed class FirebaseExceptionHandler
+
+     public static class FirebaseExceptionHandler
      {
-          // todo refactor.
-          // todo try handle exceptions.
-          public static void CatchAuthorizationAttemptResult(
-               Action<AuthorizationAttemptArgs> argumentsSetter)
+          public delegate void CommonArgsAction(CommonArgs args);
+          public delegate void GenericArgsAction<T>(GenericArgs<T> args);
+
+          public static async void ThenHandleTaskResults(this Task taskInProgress, CommonArgsAction argumentsSetter)
           {
-               var args = new AuthorizationAttemptArgs();
+               await taskInProgress;
+
+               var args = new CommonArgs();
                argumentsSetter.Invoke(args);
 
-               if(args.FinishedTask.IsCanceled)
+               Action continuation = taskInProgress switch
                {
-                    Debug.LogError("Authorization: was canceled.");
-               }
-               else if(args.FinishedTask.IsFaulted)
-               {
-                    var exception = args.FinishedTask.Exception;
-                    var lastInnerException = exception.GetLastInner();
+                    { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
 
-                    Debug.LogError("Authorization: encountered an error: " + exception);
-                    args.OnFailed?.Invoke(lastInnerException.Message);
-               }
-               else if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
-               {
-                    Debug.Log("Authorization: successfully");
-                    args.OnSucceed.Invoke();
-               }
-               else
-               {
-                    Debug.Log("Authorization: Something went wrong.");
-               }
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(taskInProgress.Exception.GetLastInner().Message),
+
+                    { IsCompletedSuccessfully: true } => () => args.OnSucceed?.Invoke(),
+
+                    _ => () => Debug.Log("task: Something went wrong.")
+               };
+
+               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
           }
 
-          public class AuthorizationAttemptArgs
+          public static async void ThenHandleTaskResults<T>(this Task<T> taskInProgress, GenericArgsAction<T> argumentsSetter)
           {
-               public Task<FirebaseUser> FinishedTask;
+               await taskInProgress;
+
+               var args = new GenericArgs<T>();
+               argumentsSetter.Invoke(args);
+
+               Action continuation = taskInProgress switch
+               {
+                    { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
+
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(taskInProgress.Exception.GetLastInner().Message),
+
+                    { IsCompletedSuccessfully: true, Result: not null } => () => args.OnSucceed?.Invoke(taskInProgress.Result),
+
+                    _ => () => Debug.Log("task: Something went wrong.")
+               };
+
+               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
+          }
+
+          public class CommonArgs
+          {
                public Action OnSucceed;
+               public ExceptionCallback OnFailed;
+          }
+
+          public class GenericArgs<T>
+          {
+               public Action<T> OnSucceed;
                public ExceptionCallback OnFailed;
           }
      }

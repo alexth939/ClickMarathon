@@ -31,14 +31,13 @@ namespace Runtime.ScenePresenters
                new MagicPlayButtonPresenter(
                     _dependencies.PlayButtonView,
                     _dependencies.PlayTimerView,
-                    newScoreReadyHandler: entry =>
+                    newScoreAchievedHandler: entry =>
                     {
-                         FirebaseApi.WriteScoreEntryAsync(CurrentUserEntry).ContinueWith(task =>
+                         FirebaseApi.WriteScoreEntryAsync(args =>
                          {
-                              if(task.IsCompletedSuccessfully)
-                                   Debug.Log($"entry writing task completed successfully!");
-                              else
-                                   Debug.Log($"something whent wrong. ex:{task.Exception}");
+                              args.ScoreEntry = CachedScoreEntry;
+                              args.OnSucceed = () => Debug.Log($"entry writing task completed successfully!");
+                              args.OnFailed = message => Debug.Log($"failed to write new score. errorMsg:{message}");
                          });
                     });
           }

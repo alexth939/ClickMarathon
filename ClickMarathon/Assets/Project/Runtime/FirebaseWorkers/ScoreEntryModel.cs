@@ -2,16 +2,29 @@
 using Firebase.Database;
 using UnityEngine;
 using static ProjectDefaults.ProjectConstants;
-using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
 
 namespace FirebaseWorkers
 {
      public sealed class ScoreEntryModel
      {
-          public string ID;
-          public string Name;
-          public long Score;
-          public int Position;
+          private const long DefaultScore = 0;
+          private const int DefaultPosition = -1;
+
+          private ScoreEntryModel() { }
+
+          public ScoreEntryModel(string id, string name)
+          {
+               this.ID = id;
+               this.Name = name;
+               this.Score = DefaultScore;
+               this.Position = DefaultPosition;
+          }
+
+          // change to {get,init}, when it will be avaliable.
+          public string ID { get; private set; }
+          public string Name { get; private set; }
+          public long Score { get; set; }
+          public int Position { get; set; }
 
           public ScoreEntryFields Fields => new ScoreEntryFields()
           {
@@ -37,21 +50,7 @@ namespace FirebaseWorkers
                }
           }
 
-          public static ScoreEntryModel GenerateDefault()
-          {
-               Debug.Log($"generate default()");
-
-               FirebaseApi.TryGetCachedUser(out var user);
-
-               return new ScoreEntryModel()
-               {
-                    ID = user.UserId,
-                    Name = user.DisplayName,
-                    Score = 0
-               };
-          }
-
-          public override string ToString()
+          public new string ToString()
           {
                return $"(ID:{ID}),(Name:{Name}),(Score:{Score})";
           }

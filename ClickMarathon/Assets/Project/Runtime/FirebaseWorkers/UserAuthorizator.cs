@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Firebase.Auth;
 using Firebase.Extensions;
 using External.Signatures;
 using static FirebaseWorkers.FirebaseServices;
@@ -18,21 +19,18 @@ namespace FirebaseWorkers
 
                GetAuthenticationService()
                     .SignInWithEmailAndPasswordAsync(methodArgs.Email, methodArgs.Password)
-                         .ContinueWithOnMainThread(task =>
-                              ExceptionHandler.CatchAuthorizationAttemptResult(args =>
-                              {
-                                   args.FinishedTask = task;
-                                   args.OnSucceed = methodArgs.OnSucceed;
-                                   args.OnFailed = methodArgs.OnFailed;
-                              }));
+                         .ThenHandleTaskResults(args =>
+                         {
+                              args.OnSucceed = methodArgs.OnSucceed;
+                              args.OnFailed = methodArgs.OnFailed;
+                         });
           }
 
-          public class EmailAuthorizationArgs
+          public sealed class EmailAuthorizationArgs
           {
                public string Email;
                public string Password;
-               public Action OnSucceed;
-               //public Action OnFailed = null;
+               public Action<FirebaseUser> OnSucceed;
                public ExceptionCallback OnFailed = null;
           }
      }

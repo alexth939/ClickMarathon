@@ -5,6 +5,7 @@ using FirebaseWorkers;
 using Runtime.DependencyContainers;
 using Popups;
 using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
+using ProjectDefaults;
 
 namespace Runtime.ScenePresenters
 {
@@ -68,6 +69,7 @@ namespace Runtime.ScenePresenters
                var welcomeWindow = _dependencies.WelcomeWindow;
                var registrationWindow = _dependencies.RegistrationWindow;
                var registrator = new UserRegistrator();
+               var transitionsView = _dependencies.TransitionsView;
 
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
                {
@@ -79,40 +81,29 @@ namespace Runtime.ScenePresenters
                               registrationWindow.OnRegisterRequest.AddListener(() =>
                               {
                                    registrationWindow.BlockInteraction();
-                                   registrator.TryRegisterEmailAsync(args =>
+                                   registrator.TryRegisterEmailAsync(registerArgs =>
                                    {
-                                        args.Email = registrationWindow.GetEmail();
-                                        args.Password = registrationWindow.GetPassword();
-                                        args.OnSucceed = () =>
-                                        {
-                                             registrator.SetNickname(registrationWindow.GetNickname(),
-                                                  onSucceed: () =>
-                                                  {
-                                                       // todo refactor
-                                                       FirebaseServices.GetAuthenticationService().SignOut();
-                                                       new UserAuthorizator().TryAuthorizeEmailAsync(args =>
-                                                       {
-                                                            args.Email = registrationWindow.GetEmail();
-                                                            args.Password = registrationWindow.GetPassword();
-                                                            args.OnSucceed = () =>
-                                                            {
-                                                                 CredentialsSaver.RememberMe(args.Email, args.Password);
-                                                                 FirebaseApi.SynchronizePlayerEntry(onDone: () =>
-                                                                      _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
-                                                                           SwitchScene(SceneName.PlayingScene)));
-                                                            };
-                                                            args.OnFailed = message =>
-                                                            {
-                                                                 DialogPopup.ShowDialog(message, onOK: () =>
-                                                                       registrationWindow.UnblockInteraction());
-                                                            };
-                                                       });
-                                                  });
-                                        };
-                                        args.OnFailed = message =>
-                                        {
+                                        registerArgs.Email = registrationWindow.GetEmail();
+                                        registerArgs.Password = registrationWindow.GetPassword();
+                                        registerArgs.OnFailed = message =>
                                              DialogPopup.ShowDialog(message, onOK: () =>
                                                    registrationWindow.UnblockInteraction());
+                                        registerArgs.OnSucceed = myUser =>
+                                        {
+                                             CredentialsSaver.RememberMe(registerArgs.Email, registerArgs.Password);
+                                             FirebaseApi.WriteScoreEntryAsync(writeArgs =>
+                                             {
+                                                  writeArgs.ScoreEntry = new ScoreEntryModel(myUser.UserId, registrationWindow.GetNickname());
+                                                  writeArgs.OnFailed = message =>
+                                                       DialogPopup.ShowDialog(message, onOK: () =>
+                                                            registrationWindow.UnblockInteraction());
+                                                  writeArgs.OnSucceed = () =>
+                                                  {
+                                                       ProjectStatics.CachedScoreEntry = writeArgs.ScoreEntry;
+                                                       transitionsView.FadeOutAsync(onDone: () =>
+                                                            SwitchScene(SceneName.PlayingScene));
+                                                  };
+                                             });
                                         };
                                    });
                               });
@@ -124,6 +115,7 @@ namespace Runtime.ScenePresenters
           {
                var welcomeWindow = _dependencies.WelcomeWindow;
                var authorizationWindow = _dependencies.AuthorizationWindow;
+               var transitionsView = _dependencies.TransitionsView;
 
                welcomeWindow.OnSignInButtonClicked.AddListener(() =>
                {
@@ -135,21 +127,29 @@ namespace Runtime.ScenePresenters
                               authorizationWindow.OnAuthorizeRequest.AddListener(() =>
                               {
                                    authorizationWindow.BlockInteraction();
-                                   new UserAuthorizator().TryAuthorizeEmailAsync(args =>
+                                   new UserAuthorizator().TryAuthorizeEmailAsync(loginArgs =>
                                    {
-                                        args.Email = authorizationWindow.GetEmail();
-                                        args.Password = authorizationWindow.GetPassword();
-                                        args.OnSucceed = () =>
-                                        {
-                                             CredentialsSaver.RememberMe(args.Email, args.Password);
-                                             FirebaseApi.SynchronizePlayerEntry(onDone: () =>
-                                                  _dependencies.TransitionsView.FadeOutAsync(onDone: () =>
-                                                       SwitchScene(SceneName.PlayingScene)));
-                                        };
-                                        args.OnFailed = message =>
-                                        {
+                                        loginArgs.Email = authorizationWindow.GetEmail();
+                                        loginArgs.Password = authorizationWindow.GetPassword();
+                                        loginArgs.OnFailed = message =>
                                              DialogPopup.ShowDialog(message, onOK: () =>
                                                    authorizationWindow.UnblockInteraction());
+                                        loginArgs.OnSucceed = myUser =>
+                                        {
+                                             CredentialsSaver.RememberMe(loginArgs.Email, loginArgs.Password);
+                                             FirebaseApi.ReadScoreEntryAsync(readArgs =>
+                                             {
+                                                  readArgs.WithID = myUser.UserId;
+                                                  readArgs.OnFailed = message =>
+                                                       DialogPopup.ShowDialog(message, onOK: () =>
+                                                            authorizationWindow.UnblockInteraction());
+                                                  readArgs.OnSucceed = snapshot =>
+                                                  {
+                                                       ProjectStatics.CachedScoreEntry = (ScoreEntryModel)snapshot;
+                                                       transitionsView.FadeOutAsync(onDone: () =>
+                                                            SwitchScene(SceneName.PlayingScene));
+                                                  };
+                                             });
                                         };
                                    });
                               });
