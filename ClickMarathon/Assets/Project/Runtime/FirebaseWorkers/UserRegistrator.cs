@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using Firebase.Extensions;
 using static FirebaseWorkers.FirebaseServices;
-using ExceptionHandler = FirebaseWorkers.FirebaseExceptionHandler;
 using EmailRegistrationArgs = FirebaseWorkers.UserAuthorizator.EmailAuthorizationArgs;
 
 namespace FirebaseWorkers

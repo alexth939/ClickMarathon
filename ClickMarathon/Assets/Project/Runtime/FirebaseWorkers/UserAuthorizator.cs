@@ -1,10 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using Firebase.Auth;
-using Firebase.Extensions;
 using External.Signatures;
 using static FirebaseWorkers.FirebaseServices;
-using ExceptionHandler = FirebaseWorkers.FirebaseExceptionHandler;
 
 namespace FirebaseWorkers
 {

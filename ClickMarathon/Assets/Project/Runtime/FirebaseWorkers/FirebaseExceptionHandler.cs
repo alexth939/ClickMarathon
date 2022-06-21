@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using Firebase.Auth;
 using External.Signatures;
 using External.Extensions;
-using Firebase.Database;
 using Firebase.Extensions;
 
 namespace FirebaseWorkers
 {
-
      public static class FirebaseExceptionHandler
      {
           public delegate void CommonArgsAction(CommonArgs args);
