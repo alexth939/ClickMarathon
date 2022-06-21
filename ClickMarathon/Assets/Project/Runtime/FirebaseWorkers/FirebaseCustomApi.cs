@@ -4,15 +4,18 @@ using UnityEngine;
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
+using External.Signatures;
 using static FirebaseWorkers.FirebaseServices;
 using static ProjectDefaults.ProjectStatics;
 using static ProjectDefaults.ProjectConstants;
+using ExceptionHandler = FirebaseWorkers.FirebaseExceptionHandler;
 
 namespace FirebaseWorkers
 {
      public static class FirebaseCustomApi
      {
-          private static Lazy<DatabaseReference> LazyDashboardRef => new Lazy<DatabaseReference>(() => GetDatabaseService().GetReference(FirebaseDashboardPath));
+          private static Lazy<DatabaseReference> LazyDashboardRef =>
+               new Lazy<DatabaseReference>(() => GetDatabaseService().GetReference(FirebaseDashboardPath));
           public static DatabaseReference DashboardRef => LazyDashboardRef.Value;
 
           public static void LogOut() => GetAuthenticationService().SignOut();
@@ -26,91 +29,53 @@ namespace FirebaseWorkers
                return user.Equals(null);
           }
 
-          public static Task<DataSnapshot> ReadScoreEntryAsync()
+          public static void ReadScoreEntryAsync(Action<ReadEntryArgs> argumentsSetter)
           {
                Debug.Log($"read score()");
-               TryGetCachedUser(out var user);
-               var val = DashboardRef.Child(user.UserId).GetValueAsync();
-               return val;
+
+               var methodArgs = new ReadEntryArgs();
+               argumentsSetter(methodArgs);
+
+               DashboardRef.Child(methodArgs.WithID).GetValueAsync()
+                    .ContinueWithOnMainThread(finishedTask =>
+                         ExceptionHandler.HandleReadResults(args =>
+                         {
+                              args.FinishedTask = finishedTask;
+                              args.OnSucceed = methodArgs.OnSucceed;
+                              args.OnFailed = methodArgs.OnFailed;
+                         }));
           }
 
-          public static Task WriteScoreEntryAsync(ScoreEntryModel scoreEntry)
+          public static Task WriteScoreEntryAsync(Action<WriteEntryArgs> argumentsSetter)
           {
                Debug.Log($"write user ()");
-               TryGetCachedUser(out var user);
-               var fields = JsonUtility.ToJson(scoreEntry.Fields);
-               return DashboardRef.Child(user.UserId).SetRawJsonValueAsync(fields);
+
+               var methodArgs = new WriteEntryArgs();
+               argumentsSetter(methodArgs);
+
+               var fields = JsonUtility.ToJson(methodArgs.ScoreEntry.Fields);
+               return DashboardRef.Child(methodArgs.ScoreEntry.ID).SetRawJsonValueAsync(fields)
+                    .ContinueWithOnMainThread(finishedTask =>
+                         ExceptionHandler.HandleWriteResults(args =>
+                         {
+                              args.FinishedTask = finishedTask;
+                              args.OnSucceed = methodArgs.OnSucceed;
+                              args.OnFailed = methodArgs.OnFailed;
+                         }));
           }
 
-          public static void SynchronizePlayerEntry(Action onDone)
+          public sealed class ReadEntryArgs
           {
-               Debug.Log($"sync player info()");
-               GetOrCreatePlayerEntryAsync(
-                    foundHandler: currentUserEntryInfo =>
-                    {
-                         Debug.Log($"assigning currentUser");
-                         CurrentUserEntry = currentUserEntryInfo;
-                         onDone.Invoke();
-                    },
-                    taskExceptionHandler: _ => fuck(),
-                    firebaseExceptionHandler: _ => fuck(),
-                    cantFindHandler: () => fuck());
-
-               void fuck() => Debug.Log($"fuck");
+               public string WithID;
+               public Action<DataSnapshot> OnSucceed;
+               public ExceptionCallback OnFailed;
           }
 
-          // todo refactor or burn it.
-          public static void GetOrCreatePlayerEntryAsync(Action<ScoreEntryModel> foundHandler,
-               Action<AggregateException> taskExceptionHandler,
-               Action<DataSnapshot> firebaseExceptionHandler,
-               Action cantFindHandler)
+          public sealed class WriteEntryArgs
           {
-               Debug.Log($"get or create entry()");
-
-               ReadScoreEntryAsync().ContinueWithOnMainThread(task =>
-               {
-                    if(task.Exception != null)
-                    {
-                         Debug.Log($"task.Exception:{task.Exception}");
-                    }
-                    else if(task.Result.Exists)
-                    {
-                         Debug.Log($"found");
-                         var entry = (ScoreEntryModel)task.Result;
-                         foundHandler.Invoke(entry);
-                    }
-                    else
-                    {
-                         Debug.Log($"score entry not found");
-                         WriteScoreEntryAsync(ScoreEntryModel.GenerateDefault())
-                              .ContinueWithOnMainThread(task =>
-                              {
-                                   if(task.Exception != null)
-                                   {
-                                        Debug.Log($"task.Exception:{task.Exception}");
-                                   }
-                                   else
-                                   {
-                                        ReadScoreEntryAsync().ContinueWithOnMainThread(task =>
-                                        {
-                                             if(task.Exception != null)
-                                             {
-                                                  Debug.Log($"task.Exception:{task.Exception}");
-                                             }
-                                             else if(task.Result.Exists)
-                                             {
-                                                  Debug.Log($"got it");
-                                                  foundHandler.Invoke((ScoreEntryModel)task.Result);
-                                             }
-                                             else
-                                             {
-                                                  Debug.Log($"cant find or create.");
-                                             }
-                                        });
-                                   }
-                              });
-                    }
-               });
+               public ScoreEntryModel ScoreEntry; 
+               public Action OnSucceed;
+               public ExceptionCallback OnFailed;
           }
      }
 }

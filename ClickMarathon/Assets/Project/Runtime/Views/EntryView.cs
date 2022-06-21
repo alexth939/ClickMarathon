@@ -38,7 +38,7 @@ namespace Runtime.Views
                _scoreField.text = scoreEntry.Score.ToString();
                _placeField.text = scoreEntry.Position.ToString();
 
-               if(scoreEntry.ID == CurrentUserEntry.ID)
+               if(scoreEntry.ID == CachedScoreEntry.ID)
                     Select();
                else
                     Unselect();

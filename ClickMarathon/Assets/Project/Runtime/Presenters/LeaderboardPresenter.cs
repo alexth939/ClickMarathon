@@ -23,7 +23,7 @@ namespace Runtime
           public void DisplayOnlyActualSegment()
           {
                int userIndexInList = _allEntries.FindIndex(
-                    entry => entry.ID == CurrentUserEntry.ID);
+                    entry => entry.ID == CachedScoreEntry.ID);
                int indexToStartTaking = Math.Max(
                     userIndexInList - LeaderboardMaxEntriesBeforeUser, 0);
 

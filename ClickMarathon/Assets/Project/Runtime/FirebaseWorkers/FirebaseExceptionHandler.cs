@@ -4,46 +4,81 @@ using UnityEngine;
 using Firebase.Auth;
 using External.Signatures;
 using External.Extensions;
+using Firebase.Database;
+using Firebase.Extensions;
 
 namespace FirebaseWorkers
 {
+
      public sealed class FirebaseExceptionHandler
      {
-          // todo refactor.
-          // todo try handle exceptions.
-          public static void CatchAuthorizationAttemptResult(
-               Action<AuthorizationAttemptArgs> argumentsSetter)
+          public delegate void CommonArgsAction(CommonArgs args);
+          public delegate void GenericArgsAction<T>(GenericArgs<T> args);
+
+          public static void HandleAuthorizationResults(GenericArgsAction<FirebaseUser> argumentsSetter)
           {
-               var args = new AuthorizationAttemptArgs();
-               argumentsSetter.Invoke(args);
-
-               if(args.FinishedTask.IsCanceled)
-               {
-                    Debug.LogError("Authorization: was canceled.");
-               }
-               else if(args.FinishedTask.IsFaulted)
-               {
-                    var exception = args.FinishedTask.Exception;
-                    var lastInnerException = exception.GetLastInner();
-
-                    Debug.LogError("Authorization: encountered an error: " + exception);
-                    args.OnFailed?.Invoke(lastInnerException.Message);
-               }
-               else if(args.FinishedTask.IsCompletedSuccessfully && args.FinishedTask.Result != null)
-               {
-                    Debug.Log("Authorization: successfully");
-                    args.OnSucceed.Invoke();
-               }
-               else
-               {
-                    Debug.Log("Authorization: Something went wrong.");
-               }
+               HandleAttemptResults(argumentsSetter);
           }
 
-          public class AuthorizationAttemptArgs
+          public static void HandleReadResults(GenericArgsAction<DataSnapshot> argumentsSetter)
           {
-               public Task<FirebaseUser> FinishedTask;
+               HandleAttemptResults(argumentsSetter);
+          }
+
+          public static void HandleWriteResults(CommonArgsAction argumentsSetter)
+          {
+               HandleAttemptResults(argumentsSetter);
+          }
+
+          private static void HandleAttemptResults(CommonArgsAction argumentsSetter)
+          {
+               var args = new CommonArgs();
+               argumentsSetter.Invoke(args);
+
+               Action continuation = args.FinishedTask switch
+               {
+                    { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
+
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(args.FinishedTask.Exception.GetLastInner().Message),
+
+                    { IsCompletedSuccessfully: true } => () => args.OnSucceed?.Invoke(),
+
+                    _ => () => Debug.Log("task: Something went wrong.")
+               };
+
+               args.FinishedTask.ContinueWithOnMainThread(_ => continuation());
+          }
+
+          private static void HandleAttemptResults<T>(GenericArgsAction<T> argumentsSetter)
+          {
+               var args = new GenericArgs<T>();
+               argumentsSetter.Invoke(args);
+
+               Action continuation = args.FinishedTask switch
+               {
+                    { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
+
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(args.FinishedTask.Exception.GetLastInner().Message),
+
+                    { IsCompletedSuccessfully: true, Result: not null } => () => args.OnSucceed?.Invoke(args.FinishedTask.Result),
+
+                    _ => () => Debug.Log("task: Something went wrong.")
+               };
+
+               args.FinishedTask.ContinueWithOnMainThread(_ => continuation());
+          }
+
+          public class CommonArgs
+          {
+               public Task FinishedTask;
                public Action OnSucceed;
+               public ExceptionCallback OnFailed;
+          }
+
+          public class GenericArgs<T>
+          {
+               public Task<T> FinishedTask;
+               public Action<T> OnSucceed;
                public ExceptionCallback OnFailed;
           }
      }

@@ -20,27 +20,12 @@ namespace FirebaseWorkers
                     .CreateUserWithEmailAndPasswordAsync(methodSrgs.Email, methodSrgs.Password)
                     .ContinueWithOnMainThread(task =>
                     {
-                         ExceptionHandler.CatchAuthorizationAttemptResult(args =>
+                         ExceptionHandler.HandleAuthorizationResults(args =>
                          {
                               args.FinishedTask = task;
                               args.OnSucceed = methodSrgs.OnSucceed;
                               args.OnFailed = methodSrgs.OnFailed;
                          });
-                    });
-          }
-
-          public void SetNickname(string nickname, Action onSucceed)
-          {
-               // note: GetAuthenticationService().CurrentUser.DisplayName is not updated automatically.
-               // u need to reauthonticate.
-
-               GetAuthenticationService().CurrentUser.UpdateUserProfileAsync(
-                    new Firebase.Auth.UserProfile()
-                    {
-                         DisplayName = nickname
-                    }).ContinueWithOnMainThread(task =>
-                    {
-                              onSucceed.Invoke();
                     });
           }
      }

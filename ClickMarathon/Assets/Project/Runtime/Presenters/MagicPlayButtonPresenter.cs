@@ -7,18 +7,18 @@ namespace Runtime
 {
      public sealed class MagicPlayButtonPresenter
      {
-          private IPlayButtonView _playButton;
-          private IPlayTimerView _playTimer;
+          private readonly IPlayButtonView _playButton;
+          private readonly IPlayTimerView _playTimer;
           private ushort _sessionClickCount;
 
           public MagicPlayButtonPresenter(
                IPlayButtonView buttonView,
                IPlayTimerView timerView,
-               Action<ScoreEntryModel> newScoreReadyHandler)
+               Action<ScoreEntryModel> newScoreAchievedHandler)
           {
                _playButton = buttonView;
                _playTimer = timerView;
-               CommitScore = newScoreReadyHandler;
+               CommitScore = newScoreAchievedHandler;
 
                _playButton.OnClick.AddListener(StartButtonClickHandler);
           }
@@ -33,11 +33,10 @@ namespace Runtime
                _playTimer.PlayCountdown(onDone: () =>
                {
                     _playButton.OnClick.RemoveListener(ScoreButtonClickHandler);
-                    CurrentUserEntry.Score += _sessionClickCount;
-                    CommitScore(CurrentUserEntry);
+                    CachedScoreEntry.Score += _sessionClickCount;
+                    CommitScore(CachedScoreEntry);
                     _playTimer.PlayCooldown(onDone: () =>
                     {
-
                          SwitchToIdleState();
                     });
                });
@@ -47,7 +46,7 @@ namespace Runtime
           {
                _playButton.OnClick.RemoveListener(StartButtonClickHandler);
                _playButton.OnClick.AddListener(ScoreButtonClickHandler);
-               _playButton.SwitchToPlayState(currentScore: CurrentUserEntry.Score);
+               _playButton.SwitchToPlayState(currentScore: CachedScoreEntry.Score);
           }
 
           private void SwitchToIdleState()
