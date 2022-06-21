@@ -37,16 +37,14 @@ namespace FirebaseWorkers
                argumentsSetter(methodArgs);
 
                DashboardRef.Child(methodArgs.WithID).GetValueAsync()
-                    .ContinueWithOnMainThread(finishedTask =>
-                         ExceptionHandler.HandleReadResults(args =>
-                         {
-                              args.FinishedTask = finishedTask;
-                              args.OnSucceed = methodArgs.OnSucceed;
-                              args.OnFailed = methodArgs.OnFailed;
-                         }));
+                    .ThenHandleTaskResults(args =>
+                    {
+                         args.OnSucceed = methodArgs.OnSucceed;
+                         args.OnFailed = methodArgs.OnFailed;
+                    });
           }
 
-          public static Task WriteScoreEntryAsync(Action<WriteEntryArgs> argumentsSetter)
+          public static void WriteScoreEntryAsync(Action<WriteEntryArgs> argumentsSetter)
           {
                Debug.Log($"write user ()");
 
@@ -54,14 +52,12 @@ namespace FirebaseWorkers
                argumentsSetter(methodArgs);
 
                var fields = JsonUtility.ToJson(methodArgs.ScoreEntry.Fields);
-               return DashboardRef.Child(methodArgs.ScoreEntry.ID).SetRawJsonValueAsync(fields)
-                    .ContinueWithOnMainThread(finishedTask =>
-                         ExceptionHandler.HandleWriteResults(args =>
-                         {
-                              args.FinishedTask = finishedTask;
-                              args.OnSucceed = methodArgs.OnSucceed;
-                              args.OnFailed = methodArgs.OnFailed;
-                         }));
+               DashboardRef.Child(methodArgs.ScoreEntry.ID).SetRawJsonValueAsync(fields)
+                    .ThenHandleTaskResults(args =>
+                    {
+                         args.OnSucceed = methodArgs.OnSucceed;
+                         args.OnFailed = methodArgs.OnFailed;
+                    });
           }
 
           public sealed class ReadEntryArgs

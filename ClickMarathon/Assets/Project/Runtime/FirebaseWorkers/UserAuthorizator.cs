@@ -19,13 +19,11 @@ namespace FirebaseWorkers
 
                GetAuthenticationService()
                     .SignInWithEmailAndPasswordAsync(methodArgs.Email, methodArgs.Password)
-                         .ContinueWithOnMainThread(task =>
-                              ExceptionHandler.HandleAuthorizationResults(args =>
-                              {
-                                   args.FinishedTask = task;
-                                   args.OnSucceed = methodArgs.OnSucceed;
-                                   args.OnFailed = methodArgs.OnFailed;
-                              }));
+                         .ThenHandleTaskResults(args =>
+                         {
+                              args.OnSucceed = methodArgs.OnSucceed;
+                              args.OnFailed = methodArgs.OnFailed;
+                         });
           }
 
           public sealed class EmailAuthorizationArgs

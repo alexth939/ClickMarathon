@@ -18,15 +18,11 @@ namespace FirebaseWorkers
 
                GetAuthenticationService()
                     .CreateUserWithEmailAndPasswordAsync(methodSrgs.Email, methodSrgs.Password)
-                    .ContinueWithOnMainThread(task =>
-                    {
-                         ExceptionHandler.HandleAuthorizationResults(args =>
+                         .ThenHandleTaskResults(args =>
                          {
-                              args.FinishedTask = task;
                               args.OnSucceed = methodSrgs.OnSucceed;
                               args.OnFailed = methodSrgs.OnFailed;
                          });
-                    });
           }
      }
 }

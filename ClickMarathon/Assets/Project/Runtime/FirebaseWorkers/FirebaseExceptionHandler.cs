@@ -10,74 +10,61 @@ using Firebase.Extensions;
 namespace FirebaseWorkers
 {
 
-     public sealed class FirebaseExceptionHandler
+     public static class FirebaseExceptionHandler
      {
           public delegate void CommonArgsAction(CommonArgs args);
           public delegate void GenericArgsAction<T>(GenericArgs<T> args);
 
-          public static void HandleAuthorizationResults(GenericArgsAction<FirebaseUser> argumentsSetter)
+          public static async void ThenHandleTaskResults(this Task taskInProgress, CommonArgsAction argumentsSetter)
           {
-               HandleAttemptResults(argumentsSetter);
-          }
+               await taskInProgress;
 
-          public static void HandleReadResults(GenericArgsAction<DataSnapshot> argumentsSetter)
-          {
-               HandleAttemptResults(argumentsSetter);
-          }
-
-          public static void HandleWriteResults(CommonArgsAction argumentsSetter)
-          {
-               HandleAttemptResults(argumentsSetter);
-          }
-
-          private static void HandleAttemptResults(CommonArgsAction argumentsSetter)
-          {
                var args = new CommonArgs();
                argumentsSetter.Invoke(args);
 
-               Action continuation = args.FinishedTask switch
+               Action continuation = taskInProgress switch
                {
                     { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
 
-                    { IsFaulted: true } => () => args.OnFailed?.Invoke(args.FinishedTask.Exception.GetLastInner().Message),
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(taskInProgress.Exception.GetLastInner().Message),
 
                     { IsCompletedSuccessfully: true } => () => args.OnSucceed?.Invoke(),
 
                     _ => () => Debug.Log("task: Something went wrong.")
                };
 
-               args.FinishedTask.ContinueWithOnMainThread(_ => continuation());
+               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
           }
 
-          private static void HandleAttemptResults<T>(GenericArgsAction<T> argumentsSetter)
+          public static async void ThenHandleTaskResults<T>(this Task<T> taskInProgress, GenericArgsAction<T> argumentsSetter)
           {
+               await taskInProgress;
+
                var args = new GenericArgs<T>();
                argumentsSetter.Invoke(args);
 
-               Action continuation = args.FinishedTask switch
+               Action continuation = taskInProgress switch
                {
                     { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
 
-                    { IsFaulted: true } => () => args.OnFailed?.Invoke(args.FinishedTask.Exception.GetLastInner().Message),
+                    { IsFaulted: true } => () => args.OnFailed?.Invoke(taskInProgress.Exception.GetLastInner().Message),
 
-                    { IsCompletedSuccessfully: true, Result: not null } => () => args.OnSucceed?.Invoke(args.FinishedTask.Result),
+                    { IsCompletedSuccessfully: true, Result: not null } => () => args.OnSucceed?.Invoke(taskInProgress.Result),
 
                     _ => () => Debug.Log("task: Something went wrong.")
                };
 
-               args.FinishedTask.ContinueWithOnMainThread(_ => continuation());
+               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
           }
 
           public class CommonArgs
           {
-               public Task FinishedTask;
                public Action OnSucceed;
                public ExceptionCallback OnFailed;
           }
 
           public class GenericArgs<T>
           {
-               public Task<T> FinishedTask;
                public Action<T> OnSucceed;
                public ExceptionCallback OnFailed;
           }
