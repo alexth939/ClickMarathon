@@ -1,4 +1,8 @@
-﻿using System;
+﻿/// <summary>
+/// version 17.6.22
+/// </summary>
+
+using System;
 
 namespace External.Extensions
 {
