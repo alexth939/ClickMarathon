@@ -7,6 +7,9 @@ namespace Runtime.Views
      [RequireComponent(typeof(Animator))]
      public sealed class TransitionsView: MonoBehaviour, ITransitionsView
      {
+          private const string AnimatorFadeInKey = "Entering";
+          private const string AnimatorFadeOutKey = "Exiting";
+
           [SerializeField] private Animator _animator;
           private ContentState _currentState = default;
 
@@ -67,7 +70,7 @@ namespace Runtime.Views
                     OnFadeInDone = null;
                };
 
-               _animator.SetBool("Entering", true);
+               _animator.SetBool(AnimatorFadeInKey, true);
           }
 
           /// <summary>
@@ -84,7 +87,7 @@ namespace Runtime.Views
                     OnFadeOutDone = null;
                };
 
-               _animator.SetBool("Exiting", true);
+               _animator.SetBool(AnimatorFadeOutKey, true);
           }
 
           public void CompleteFadeIn()
