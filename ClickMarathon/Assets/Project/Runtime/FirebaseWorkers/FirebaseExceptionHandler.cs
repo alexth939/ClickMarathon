@@ -12,14 +12,12 @@ namespace FirebaseWorkers
           public delegate void CommonArgsAction(CommonArgs args);
           public delegate void GenericArgsAction<T>(GenericArgs<T> args);
 
-          public static async void ThenHandleTaskResults(this Task taskInProgress, CommonArgsAction argumentsSetter)
+          public static void ThenHandleTaskResults(this Task taskInProgress, CommonArgsAction argumentsSetter)
           {
-               await taskInProgress;
-
                var args = new CommonArgs();
                argumentsSetter.Invoke(args);
 
-               Action continuation = taskInProgress switch
+               Action generateContinuation() => taskInProgress switch
                {
                     { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
 
@@ -30,17 +28,18 @@ namespace FirebaseWorkers
                     _ => () => Debug.Log("task: Something went wrong.")
                };
 
-               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
+               taskInProgress.ContinueWithOnMainThread(_ => generateContinuation().Invoke());
+
+               // funny moment:
+               // await taskInProgress.ContinueWithOnMainThread(_ => generateContinuation()());
           }
 
-          public static async void ThenHandleTaskResults<T>(this Task<T> taskInProgress, GenericArgsAction<T> argumentsSetter)
+          public static void ThenHandleTaskResults<T>(this Task<T> taskInProgress, GenericArgsAction<T> argumentsSetter)
           {
-               await taskInProgress;
-
                var args = new GenericArgs<T>();
                argumentsSetter.Invoke(args);
 
-               Action continuation = taskInProgress switch
+               Action generateContinuation() => taskInProgress switch
                {
                     { IsCanceled: true } => () => Debug.LogError("task: was canceled."),
 
@@ -51,7 +50,7 @@ namespace FirebaseWorkers
                     _ => () => Debug.Log("task: Something went wrong.")
                };
 
-               await taskInProgress.ContinueWithOnMainThread(_ => continuation());
+               taskInProgress.ContinueWithOnMainThread(_ => generateContinuation().Invoke());
           }
 
           public class CommonArgs
