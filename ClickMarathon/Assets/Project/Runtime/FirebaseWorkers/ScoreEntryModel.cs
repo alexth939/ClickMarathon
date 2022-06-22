@@ -1,5 +1,5 @@
-﻿using Firebase.Database;
-using System;
+﻿using System;
+using Firebase.Database;
 using UnityEngine;
 using static ProjectDefaults.ProjectConstants;
 
