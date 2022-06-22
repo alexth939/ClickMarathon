@@ -1,6 +1,6 @@
 ﻿using System;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace Runtime.Views
 {
@@ -14,6 +14,7 @@ namespace Runtime.Views
           private ContentState _currentState = default;
 
           private event Action OnFadeInDone;
+
           private event Action OnFadeOutDone;
 
           private enum ContentState

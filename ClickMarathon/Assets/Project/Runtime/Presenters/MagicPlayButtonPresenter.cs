@@ -1,6 +1,6 @@
 ﻿using System;
-using Runtime.Views;
 using FirebaseWorkers;
+using Runtime.Views;
 using static ProjectDefaults.ProjectStatics;
 
 namespace Runtime
@@ -56,6 +56,7 @@ namespace Runtime
           }
 
           private void StartButtonClickHandler() => StartPlaying();
+
           private void ScoreButtonClickHandler()
           {
                _sessionClickCount++;

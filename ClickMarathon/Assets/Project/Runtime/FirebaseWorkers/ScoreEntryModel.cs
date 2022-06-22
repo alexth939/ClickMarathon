@@ -1,5 +1,5 @@
-﻿using System;
-using Firebase.Database;
+﻿using Firebase.Database;
+using System;
 using UnityEngine;
 using static ProjectDefaults.ProjectConstants;
 
@@ -10,7 +10,8 @@ namespace FirebaseWorkers
           private const long DefaultScore = 0;
           private const int DefaultPosition = -1;
 
-          private ScoreEntryModel() { }
+          private ScoreEntryModel()
+          { }
 
           public ScoreEntryModel(string id, string name)
           {
@@ -22,6 +23,7 @@ namespace FirebaseWorkers
 
           // change to {get,init}, when it will be avaliable.
           public string ID { get; private set; }
+
           public string Name { get; private set; }
           public long Score { get; set; }
           public int Position { get; set; }

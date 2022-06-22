@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using FirebaseWorkers;
+using UnityEngine;
 using static ProjectDefaults.ProjectConstants;
 
 namespace Runtime.Views

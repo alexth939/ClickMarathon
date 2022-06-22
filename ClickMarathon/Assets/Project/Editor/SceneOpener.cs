@@ -5,7 +5,7 @@ using static UnityEditor.SceneManagement.EditorSceneManager;
 public class MenuTest: MonoBehaviour
 {
      [MenuItem("<Open a Scene>/Connecting Scene")]
-     static void OpenConnectingScene()
+     private static void OpenConnectingScene()
      {
           var canLeave = SaveCurrentModifiedScenesIfUserWantsTo();
           if(canLeave == false)
@@ -15,7 +15,7 @@ public class MenuTest: MonoBehaviour
      }
 
      [MenuItem("<Open a Scene>/Playing Scene")]
-     static void OpenPlayingScene()
+     private static void OpenPlayingScene()
      {
           var canLeave = SaveCurrentModifiedScenesIfUserWantsTo();
           if(canLeave == false)
@@ -23,5 +23,4 @@ public class MenuTest: MonoBehaviour
 
           OpenScene("Assets/Scenes/PlayingScene.unity");
      }
-
 }

@@ -1,11 +1,11 @@
 ﻿// version 13.6.22
 
+using System;
 using System.Collections;
+using External.UnityEngine.UI.Extensions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System;
-using External.UnityEngine.UI.Extensions;
 
 namespace External.ScriptedAnimations
 {

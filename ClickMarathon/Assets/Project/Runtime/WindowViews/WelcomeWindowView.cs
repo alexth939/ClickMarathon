@@ -1,7 +1,7 @@
+using Popups;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Popups;
 
 namespace Runtime.WindowViews
 {
@@ -19,6 +19,7 @@ namespace Runtime.WindowViews
                _registerButton.interactable =
                     _signInButton.interactable = true;
           }
+
           public void BlockInteraction()
           {
                _registerButton.interactable =

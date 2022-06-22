@@ -1,5 +1,5 @@
-﻿using UnityEngine.Events;
-using Popups;
+﻿using Popups;
+using UnityEngine.Events;
 
 namespace Runtime.WindowViews
 {
@@ -9,6 +9,7 @@ namespace Runtime.WindowViews
           UnityEvent OnSignInButtonClicked { get; }
 
           void UnblockInteraction();
+
           void BlockInteraction();
      }
 }

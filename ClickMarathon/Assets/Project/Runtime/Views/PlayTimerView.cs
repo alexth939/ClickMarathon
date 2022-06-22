@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections;
+using External.UnityEngine.UI.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
-using External.UnityEngine.UI.Extensions;
-using static ProjectDefaults.ProjectConstants;
 using static External.ScriptedAnimations.TransformAnimations;
+using static ProjectDefaults.ProjectConstants;
 
 namespace Runtime.Views
 {
      public sealed class PlayTimerView: MonoBehaviour, IPlayTimerView
      {
-          [SerializeField] GameObject _timerGameObject;
-          [SerializeField] Image _timerImage;
+          [SerializeField] private GameObject _timerGameObject;
+          [SerializeField] private Image _timerImage;
           private bool _isTimerRunning = false;
 
           public void PlayCooldown(Action onDone)

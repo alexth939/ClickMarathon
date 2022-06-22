@@ -1,8 +1,8 @@
 ﻿using System;
-using UnityEngine;
+using External.Signatures;
 using Firebase.Auth;
 using Firebase.Database;
-using External.Signatures;
+using UnityEngine;
 using static FirebaseWorkers.FirebaseServices;
 using static ProjectDefaults.ProjectConstants;
 
@@ -12,6 +12,7 @@ namespace FirebaseWorkers
      {
           private static Lazy<DatabaseReference> LazyDashboardRef =>
                new Lazy<DatabaseReference>(() => GetDatabaseService().GetReference(FirebaseDashboardPath));
+
           public static DatabaseReference DashboardRef => LazyDashboardRef.Value;
 
           public static void LogOut() => GetAuthenticationService().SignOut();
@@ -65,7 +66,7 @@ namespace FirebaseWorkers
 
           public sealed class WriteEntryArgs
           {
-               public ScoreEntryModel ScoreEntry; 
+               public ScoreEntryModel ScoreEntry;
                public Action OnSucceed;
                public ExceptionCallback OnFailed;
           }

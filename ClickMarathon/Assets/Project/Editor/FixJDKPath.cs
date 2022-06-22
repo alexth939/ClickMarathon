@@ -1,11 +1,11 @@
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
 public class FixJDKPath//: MonoBehaviour
 {
      [RuntimeInitializeOnLoadMethod()]
-     static void FixJDKPathMethod()
+     private static void FixJDKPathMethod()
      {
           Debug.Log($"fixing JDK path");
 

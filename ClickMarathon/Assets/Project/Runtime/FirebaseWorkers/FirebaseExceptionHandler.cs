@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using UnityEngine;
-using External.Signatures;
 using External.Extensions;
+using External.Signatures;
 using Firebase.Extensions;
+using UnityEngine;
 
 namespace FirebaseWorkers
 {
      public static class FirebaseExceptionHandler
      {
           public delegate void CommonArgsAction(CommonArgs args);
+
           public delegate void GenericArgsAction<T>(GenericArgs<T> args);
 
           public static void ThenHandleTaskResults(this Task taskInProgress, CommonArgsAction argumentsSetter)

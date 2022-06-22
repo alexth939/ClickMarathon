@@ -1,9 +1,9 @@
 ﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Events;
-using TMPro;
 using Popups;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Runtime.WindowViews
 {
@@ -25,7 +25,9 @@ namespace Runtime.WindowViews
           }
 
           public string GetEmail() => _emailInputField.text;
+
           public string GetPassword() => _passwordInputField.text;
+
           public void UnblockInteraction()
           {
                _emailInputField.interactable =
@@ -33,6 +35,7 @@ namespace Runtime.WindowViews
                          _backButton.interactable =
                               _signInButon.interactable = true;
           }
+
           public void BlockInteraction()
           {
                _emailInputField.interactable =
@@ -46,6 +49,7 @@ namespace Runtime.WindowViews
           {
                throw new NotImplementedException();
           }
+
           public void StopConnectingAnimation()
           {
                throw new NotImplementedException();

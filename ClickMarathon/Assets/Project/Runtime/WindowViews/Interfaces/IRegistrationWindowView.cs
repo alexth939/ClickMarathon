@@ -1,5 +1,5 @@
-﻿using UnityEngine.Events;
-using Popups;
+﻿using Popups;
+using UnityEngine.Events;
 
 namespace Runtime.WindowViews
 {
@@ -9,9 +9,13 @@ namespace Runtime.WindowViews
           UnityEvent OnRegisterRequest { get; }
 
           void BlockInteraction();
+
           void UnblockInteraction();
+
           string GetNickname();
+
           string GetEmail();
+
           string GetPassword();
      }
 }

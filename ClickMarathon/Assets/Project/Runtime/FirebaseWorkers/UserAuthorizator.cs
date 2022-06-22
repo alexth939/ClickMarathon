@@ -1,7 +1,7 @@
 ﻿using System;
-using UnityEngine;
-using Firebase.Auth;
 using External.Signatures;
+using Firebase.Auth;
+using UnityEngine;
 using static FirebaseWorkers.FirebaseServices;
 
 namespace FirebaseWorkers

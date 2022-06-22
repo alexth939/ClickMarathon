@@ -1,7 +1,7 @@
 ﻿using FirebaseWorkers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using static ProjectDefaults.ProjectStatics;
 
 namespace Runtime.Views
@@ -49,6 +49,7 @@ namespace Runtime.Views
                ColorUtility.TryParseHtmlString(SelectedColorRGB, out var color);
                _backgroundImage.color = color;
           }
+
           private void Unselect()
           {
                ColorUtility.TryParseHtmlString(UnselectedColorRGB, out var color);

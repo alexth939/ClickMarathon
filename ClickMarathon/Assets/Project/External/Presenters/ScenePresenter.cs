@@ -28,8 +28,14 @@ namespace UnityEngine.SceneManagement
           /// auto-invoked at base.Start().
           /// </summary>
           protected abstract void EnteringScene();
-          protected virtual void OnApplicationAcquiredFocus() { }
-          protected virtual void OnApplicationLostFocus() { }
-          protected virtual void LeavingScene() { }
+
+          protected virtual void OnApplicationAcquiredFocus()
+          { }
+
+          protected virtual void OnApplicationLostFocus()
+          { }
+
+          protected virtual void LeavingScene()
+          { }
      }
 }

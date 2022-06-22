@@ -1,8 +1,8 @@
 using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using FirebaseWorkers;
 using Runtime.DependencyContainers;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using static ProjectDefaults.ProjectConstants;
 using static ProjectDefaults.ProjectStatics;
 using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
@@ -18,8 +18,8 @@ namespace Runtime.ScenePresenters
 
           protected override void EnteringScene()
           {
-               _dependencies.TransitionsView.FadeInAsync(onDone:()=>
-                    StartCoroutine(TransitToLeaderboardWhenReady()));
+               _dependencies.TransitionsView.FadeInAsync(onDone: () =>
+                     StartCoroutine(TransitToLeaderboardWhenReady()));
 
                CheckFirebaseStuff();
                InitMagicPlayButtonPresenter();

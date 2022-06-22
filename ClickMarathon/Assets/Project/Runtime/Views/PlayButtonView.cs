@@ -1,9 +1,9 @@
 using System;
+using External.Views;
 using UnityEngine;
 using UnityEngine.Events;
-using External.Views;
-using static ProjectDefaults.ProjectConstants;
 using static External.ScriptedAnimations.TransformAnimations;
+using static ProjectDefaults.ProjectConstants;
 
 namespace Runtime.Views
 {

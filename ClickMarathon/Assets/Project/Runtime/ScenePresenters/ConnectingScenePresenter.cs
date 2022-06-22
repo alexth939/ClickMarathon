@@ -1,10 +1,10 @@
+using FirebaseWorkers;
+using Popups;
+using ProjectDefaults;
+using Runtime.DependencyContainers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using FirebaseWorkers;
-using Runtime.DependencyContainers;
-using Popups;
 using FirebaseApi = FirebaseWorkers.FirebaseCustomApi;
-using ProjectDefaults;
 
 namespace Runtime.ScenePresenters
 {
