@@ -11,7 +11,8 @@ namespace Popups
 {
      public sealed class DialogPopup: PopupView
      {
-          private const string PrefabName = "DialogPopup";
+          private const string DialogPopupPrefabName = "DialogPopup";
+          private const string EventSystemPrefabName = "EventSystem";
 
           private static DialogPopup _dialogOnScene;
 
@@ -22,7 +23,10 @@ namespace Popups
           {
                get
                {
-                    _dialogOnScene ??= Instantiate(Resources.Load<DialogPopup>(PrefabName));
+                    if(IsSceneHasEventSystem() == false)
+                         SpawnEventSystem();
+
+                    _dialogOnScene ??= Instantiate(Resources.Load<DialogPopup>(DialogPopupPrefabName));
                     return _dialogOnScene;
                }
           }
@@ -39,6 +43,17 @@ namespace Popups
                          Dialog.Hide();
                     });
                });
+          }
+
+          private static bool IsSceneHasEventSystem()
+          {
+               bool found = FindObjectOfType<UnityEngine.EventSystems.EventSystem>();
+               return found;
+          }
+
+          private static void SpawnEventSystem()
+          {
+               Instantiate(Resources.Load(EventSystemPrefabName));
           }
 
           private void OnDestroy()

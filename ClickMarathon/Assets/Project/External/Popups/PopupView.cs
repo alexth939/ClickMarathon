@@ -76,7 +76,7 @@ namespace Popups
 
           private bool IsNotCompletelyHidden => gameObject.activeSelf;
 
-          bool IsNotCompletelyRevealed =>
+          private bool IsNotCompletelyRevealed =>
                gameObject.activeSelf == false || _alphaLerper.alpha < AlmostOne;
 
           public void Show(float? duration = null, Action onDone = null)
