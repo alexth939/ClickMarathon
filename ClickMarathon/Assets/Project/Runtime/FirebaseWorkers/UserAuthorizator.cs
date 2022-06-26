@@ -8,7 +8,7 @@ namespace FirebaseWorkers
 {
      public sealed class UserAuthorizator
      {
-          public void TryAuthorizeEmailAsync(Action<EmailAuthorizationArgs> argumentsSetter)
+          public static void TryAuthorizeEmailAsync(Action<EmailAuthorizationArgs> argumentsSetter)
           {
                Debug.Log($"Try Authorize() invoked");
 

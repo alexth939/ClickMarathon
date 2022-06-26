@@ -7,7 +7,7 @@ namespace FirebaseWorkers
 {
      public sealed class UserRegistrator
      {
-          public void TryRegisterEmailAsync(Action<EmailRegistrationArgs> argumentsSetter)
+          public static void TryRegisterEmailAsync(Action<EmailRegistrationArgs> argumentsSetter)
           {
                Debug.Log($"Try Register() invoked");
 

@@ -1,10 +1,13 @@
 ﻿using System;
 using External.Signatures;
+using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using UnityEngine;
 using static FirebaseWorkers.FirebaseServices;
 using static ProjectDefaults.ProjectConstants;
+using EmailRegistrationArgs = FirebaseWorkers.UserAuthorizator.EmailAuthorizationArgs;
+using EmailAuthorizationArgs = FirebaseWorkers.UserAuthorizator.EmailAuthorizationArgs;
 
 namespace FirebaseWorkers
 {
@@ -14,6 +17,35 @@ namespace FirebaseWorkers
                new Lazy<DatabaseReference>(() => GetDatabaseService().GetReference(FirebaseDashboardPath));
 
           public static DatabaseReference DashboardRef => LazyDashboardRef.Value;
+
+          public static void CheckIfAvaliable(Action<bool> resultCallback = null)
+          {
+               Debug.Log($"Checking firebase's dependencies.");
+               FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+               {
+                    var dependencyStatus = task.Result;
+                    if(dependencyStatus == DependencyStatus.Available)
+                    {
+                         Debug.Log($"Its still alive and avaliable.");
+                         resultCallback?.Invoke(true);
+                    }
+                    else
+                    {
+                         Debug.Log($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                         resultCallback?.Invoke(false);
+                    }
+               });
+          }
+
+          public static void TryRegisterEmailAsync(Action<EmailRegistrationArgs> argumentsSetter)
+          {
+               UserRegistrator.TryRegisterEmailAsync(argumentsSetter);
+          }
+
+          public static void TryAuthorizeEmailAsync(Action<EmailAuthorizationArgs> argumentsSetter)
+          {
+               UserAuthorizator.TryAuthorizeEmailAsync(argumentsSetter);
+          }
 
           public static void LogOut() => GetAuthenticationService().SignOut();
 

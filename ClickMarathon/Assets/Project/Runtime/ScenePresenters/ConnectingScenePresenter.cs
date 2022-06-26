@@ -16,7 +16,7 @@ namespace Runtime.ScenePresenters
           {
                _dependencies.TransitionsView.FadeInAsync();
 
-               new StupidFirebaseValidator().CheckIfAvaliable(isAvaliable =>
+               FirebaseApi.CheckIfAvaliable(isAvaliable =>
                {
                     if(isAvaliable)
                     {
@@ -32,11 +32,11 @@ namespace Runtime.ScenePresenters
                });
           }
 
-          private void BackToWelcomeWindow(IPopupView from)
+          private void BackToWelcomeWindow(IPopupView currentWindow)
           {
                var welcomeWindow = _dependencies.WelcomeWindow;
 
-               from.Hide(onDone: () =>
+               currentWindow.Hide(onDone: () =>
                     welcomeWindow.Show(onDone: () =>
                          welcomeWindow.UnblockInteraction()));
           }
@@ -48,7 +48,7 @@ namespace Runtime.ScenePresenters
                registrationWindow.OnGoBackRequest.AddListener(() =>
                {
                     registrationWindow.BlockInteraction();
-                    BackToWelcomeWindow(from: registrationWindow);
+                    BackToWelcomeWindow(currentWindow: registrationWindow);
                });
           }
 
@@ -59,7 +59,7 @@ namespace Runtime.ScenePresenters
                authorizationWindow.OnGoBackRequest.AddListener(() =>
                {
                     authorizationWindow.BlockInteraction();
-                    BackToWelcomeWindow(from: authorizationWindow);
+                    BackToWelcomeWindow(currentWindow: authorizationWindow);
                });
           }
 
@@ -67,7 +67,6 @@ namespace Runtime.ScenePresenters
           {
                var welcomeWindow = _dependencies.WelcomeWindow;
                var registrationWindow = _dependencies.RegistrationWindow;
-               var registrator = new UserRegistrator();
                var transitionsView = _dependencies.TransitionsView;
 
                welcomeWindow.OnRegisterButtonClicked.AddListener(() =>
@@ -80,7 +79,7 @@ namespace Runtime.ScenePresenters
                               registrationWindow.OnRegisterRequest.AddListener(() =>
                               {
                                    registrationWindow.BlockInteraction();
-                                   registrator.TryRegisterEmailAsync(registerArgs =>
+                                   FirebaseApi.TryRegisterEmailAsync(registerArgs =>
                                    {
                                         registerArgs.Email = registrationWindow.GetEmail();
                                         registerArgs.Password = registrationWindow.GetPassword();
@@ -126,7 +125,7 @@ namespace Runtime.ScenePresenters
                               authorizationWindow.OnAuthorizeRequest.AddListener(() =>
                               {
                                    authorizationWindow.BlockInteraction();
-                                   new UserAuthorizator().TryAuthorizeEmailAsync(loginArgs =>
+                                   FirebaseApi.TryAuthorizeEmailAsync(loginArgs =>
                                    {
                                         loginArgs.Email = authorizationWindow.GetEmail();
                                         loginArgs.Password = authorizationWindow.GetPassword();
